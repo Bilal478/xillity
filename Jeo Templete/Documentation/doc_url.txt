@@ -1,0 +1,11 @@
+Digiboard HTML Documentation URL
+
+https://digiboard.codebasket.xyz/doc/
+
+Digiboard React Documentation URL
+
+https://react.digiboard.codebasket.xyz/doc/
+
+Digiboard Next JS Documentation URL
+
+https://nextjs.digiboard.codebasket.xyz/doc/

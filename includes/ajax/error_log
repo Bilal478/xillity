@@ -1,0 +1,5 @@
+[27-Mar-2024 01:06:46 UTC] PHP Notice:  Undefined variable: conn in /home4/anomozco/projects.anomoz.com/ke/jeoXillityCrm/includes/ajax/assign_priority.php on line 27
+[27-Mar-2024 01:06:46 UTC] PHP Fatal error:  Uncaught Error: Call to a member function close() on null in /home4/anomozco/projects.anomoz.com/ke/jeoXillityCrm/includes/ajax/assign_priority.php:27
+Stack trace:
+#0 {main}
+  thrown in /home4/anomozco/projects.anomoz.com/ke/jeoXillityCrm/includes/ajax/assign_priority.php on line 27
