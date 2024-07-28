@@ -258,6 +258,11 @@ if (isset($_GET['delete-template'])) {
 
 <head><? include("./includes/views/head2.php"); ?>
 <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+<style>
+        .cke_notifications_area {
+            display: none;
+        }
+    </style>
 </head>
 
 <body class="body-padding body-p-top">
@@ -936,12 +941,12 @@ if (isset($_GET['delete-template'])) {
                                     <label>Department</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <select name="department" class="form-control form-control-sm" data-placeholder="Select Department">
+                                    <select name="department" class="form-select" data-placeholder="Select Department">
                                         <option value="">Select Department</option>
-                                        <option value="Bus">Bus</option>
-                                        <option value="Airplane">Airplane</option>
-                                        <option value="Taxi">Taxi</option>
-                                        <option value="Subway">Subway</option>
+                                        <?php $result = getAll($con, "select * from jeoxillitycrm_departments");
+                                        foreach ($result as $index => $department) { ?>
+                                        <option value="<?php echo $department['name']; ?>"><?php echo $department['name']; ?></option>
+                                        <?php } ?>
                                     </select>
                                 </div>
                             </div>
@@ -952,12 +957,12 @@ if (isset($_GET['delete-template'])) {
                                     <label>Priority</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <select name="priority" class="form-control form-control-sm" data-placeholder="Select Priority">
+                                    <select name="priority" class="form-select" data-placeholder="Select Priority">
                                         <option value="">Select Priority</option>
-                                        <option value="Low">Low</option>
-                                        <option value="Medium">Medium</option>
-                                        <option value="High">High</option>
-                                        <option value="Urgent">Urgent</option>
+                                        <?php $result = getAll($con, "select * from jeoxillitycrm_task_priorities");
+                                         foreach ($result as $index => $priority) { ?>
+                                        <option value="<?php echo $priority['name']; ?>"><?php echo $priority['name']; ?></option>
+                                        <?php } ?>
                                     </select>
                                 </div>
                             </div>
@@ -968,11 +973,12 @@ if (isset($_GET['delete-template'])) {
                                     <label>Ticket Status</label>
                                 </div>
                                 <div class="col-md-8">
-                                    <select name="status" class="form-control form-control-sm" data-placeholder="Select Ticket Status">
+                                    <select name="status" class="form-select" data-placeholder="Select Ticket Status">
                                         <option value="">Select Ticket Status</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Complete">Complete</option>
-                                        <option value="In_progress">In Progress</option>
+                                        <?php $result = getAll($con, "select * from jeoxillitycrm_task_priorities");
+                                         foreach ($result as $index => $status) { ?>
+                                        <option value="<?php echo $status['name']; ?>"><?php echo $status['name']; ?></option>
+                                        <?php } ?>
                                     </select>
                                 </div>
                             </div>
@@ -1098,9 +1104,9 @@ if (isset($_GET['delete-template'])) {
                 $("input[name='email']").val("")
                 $("input[name='port_no']").val("")
                 $("input[name='ip_address']").val("")
-                $("input[name='department']").val("")
-                $("input[name='priority']").val("")
-                $("input[name='status']").val("")
+                $("select[name='department']").val("")
+                $("select[name='priority']").val("")
+                $("select[name='status']").val("")
                 $("input[name='password']").val("")
                 $("input[name='actionId']").val("")
             }
@@ -1108,7 +1114,7 @@ if (isset($_GET['delete-template'])) {
     })
 </script>
 
-<script>
+<!-- <script>
     $(document).ready(function() {
         $("#create_record_modal").on('show.bs.modal', function(e) {
             var mydata = $(e.relatedTarget).data('mydata');
@@ -1161,7 +1167,7 @@ if (isset($_GET['delete-template'])) {
             }
         });
     })
-</script>
+</script> -->
 
 <script>
     const profilePicInput = document.getElementById('profile_pic');

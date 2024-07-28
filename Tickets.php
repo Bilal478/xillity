@@ -11,7 +11,7 @@ if (isset($_POST['create_package'])) {
     $phone_number = escape($_POST['phone_number']);
     $primary_contact = escape($_POST['primary_contact']);
     $home_number = escape($_POST['home_number']);
-    $location_name = escape($_POST['location_name']);
+    // $location_name = escape($_POST['location_name']);
     $start_date = escape($_POST['start_date']);
     $end_date = escape($_POST['end_date']);
     $priority = escape($_POST['priority']);
@@ -26,9 +26,10 @@ if (isset($_POST['create_package'])) {
     if ($actionId == "") {
         $id = generateRandomString();
         $actionId = $id;
-        $query = "INSERT INTO jeoXillityCrm_tickets (id, name, company_name, department, site_name, email, status, phone_number, primary_contact, home_number, location_name, start_date, end_date, priority, assign, description, timeAdded, userId) VALUES ('$id', '$name', '$company_name', '$department', '$site_name', '$email', '$status', '$phone_number', '$primary_contact', '$home_number', '$location_name','$start_date', '$end_date', '$priority', '$assign', '$description', '$timeAdded', '$session_userId')";
+        $query = "INSERT INTO jeoXillityCrm_tickets (id, name, company_name, department, site_name, email, status, phone_number, primary_contact, home_number, location_name, start_date, end_date, priority, assign, description, timeAdded, userId) VALUES 
+                                                    ('$id', '$name', '$company_name', '$department', '$site_name', '$email', '$status', '$phone_number', '$primary_contact', '$home_number', '','$start_date', '$end_date', '$priority', '$assign', '$description', '$timeAdded', '$session_userId')";
     } else {
-        $query = "UPDATE jeoXillityCrm_tickets SET name='$name', company_name='$company_name', department='$department', site_name='$site_name', email='$email', status='$status', phone_number='$phone_number', primary_contact='$primary_contact', home_number='$home_number', location_name='$location_name', start_date='$start_date', end_date='$end_date', priority='$priority', assign='$assign', description='$description' WHERE id='$actionId'";
+        $query = "UPDATE jeoXillityCrm_tickets SET name='$name', company_name='$company_name', department='$department', site_name='$site_name', email='$email', status='$status', phone_number='$phone_number', primary_contact='$primary_contact', home_number='$home_number',  start_date='$start_date', end_date='$end_date', priority='$priority', assign='$assign', description='$description' WHERE id='$actionId'";
     }
     runQuery($query);
     $file = storeFile($_FILES['file']);
@@ -250,7 +251,7 @@ if (isset($_POST['companyId'])) {
                                     <th>Description</th>
                                     <th>Start date</th>
                                     <th>Due date</th>
-                                    <th>Location Name</th>
+                                    <th>Company Name</th>
                                     <th>Assign To</th>
                                     <th>Priority</th>
                                     <th>Status</th>
@@ -272,7 +273,12 @@ if (isset($_POST['companyId'])) {
                                         <td><?php echo substr($row['description'], 0, 60) . (strlen($row['description']) > 60 ? '...' : ''); ?></td>
                                         <td><?php echo $row['start_date'] ?></td>
                                         <td><?= isset($row['end_date']) && !empty($row['end_date']) ? $row['end_date'] : "No Due Date" ?></td>
-                                        <td><?php echo $row['location_name'] ?></td>
+                                        <td><?php $id = $row['company_name'];
+                                            $query = "SELECT site_name FROM jeoXillityCrm_parent_company WHERE Id = '$id' ";
+
+                                            // Execute the query and get the result
+                                            $result = getOne($con, $query);
+                                            echo $result ?></td>
                                         <!-- <td><?php echo $row['assign'] ?></td> -->
                                         <!-- <td>
                                             <?php
@@ -379,7 +385,7 @@ if (isset($_POST['companyId'])) {
                             </div> -->
                             <div class="col-4 offset-1">
                                 <label for="addTaskName" class="form-label">Company Name</label>
-                                <select name="site_name" id="companySelect" class="form-control form-control-sm" data-placeholder="Select Company Name">
+                                <select name="company_name" id="companySelect" class="form-control form-control-sm" data-placeholder="Select Company Name">
                                     <option value="">Select Company Name</option>
                                     <?php
                                     $sql = "SELECT * FROM jeoXillityCrm_parent_company";
@@ -473,17 +479,17 @@ if (isset($_POST['companyId'])) {
                                 <input type="text" name="phone_number" id="phoneSelect" class="form-control form-control-sm" placeholder="Phone Number" readonly>
                             </div>
                             <div class="col-sm-3 offset-1">
-                                <label for="addTaskName" class="form-label">Primary Contact</label>
-                                <input type="text" name="primary_contact" id="addTaskName" class="form-control form-control-sm" placeholder="Primary Contact">
+                                <label for="primary_contact" class="form-label">Primary Contact</label>
+                                <input type="text" name="primary_contact" id="primary_contact" class="form-control form-control-sm" placeholder="Primary Contact">
                             </div>
                             <div class="col-sm-3">
-                                <label for="addTaskName" class="form-label">Home Number</label>
-                                <input type="text" name="home_number" id="addTaskName" class="form-control form-control-sm" placeholder="Home Number">
+                                <label for="home_number" class="form-label">Home Number</label>
+                                <input type="text" name="home_number" id="home_number" class="form-control form-control-sm" placeholder="Home Number">
                             </div>
-                            <div class="col-sm-4">
+                            <!-- <div class="col-sm-4">
                                 <label for="addTaskName" class="form-label">Location Name</label>
                                 <input type="text" name="location_name" id="addTaskName" class="form-control form-control-sm" placeholder="Location Name">
-                            </div>
+                            </div> -->
                             <div class="col-sm-4">
                                 <label for="addTaskStartDate" class="form-label">Start Date</label>
                                 <input type="text" name="start_date" id="addTaskStartDate" class="form-control form-control-sm date-picker" placeholder="Eg: 12 Feb, 20" readonly>
@@ -536,7 +542,7 @@ if (isset($_POST['companyId'])) {
     </div>
     <!-- add new task modal -->
     <!-- edit task modal -->
-    <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="editTaskModal" tabindex="-1" aria-labelledby="editTaskModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -614,7 +620,7 @@ if (isset($_POST['companyId'])) {
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- edit task modal -->
 
     <!-- view task modal -->
@@ -695,27 +701,7 @@ if (isset($_POST['companyId'])) {
         </div>
     </div>
 
-    <div class="modal fade" id="delete_record" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header" style="background:#fd2752">
-                <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
-                <button type="button" class="btn btn-danger" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p class="mb-0">This action cannot be reversed.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
-                <a href="#sd" id="delete-project">
-                    <button type="button" class="btn btn-danger">Yes</button>
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+
     <!-- view task modal -->
     <? include("./includes/views/footerjs.php"); ?>
 </body>
@@ -787,7 +773,7 @@ if (isset($_POST['companyId'])) {
                 $("input[name='phone_number']").val(mydata['phone_number'])
                 $("input[name='primary_contact']").val(mydata['primary_contact'])
                 $("input[name='home_number']").val(mydata['home_number'])
-                $("input[name='location_name']").val(mydata['location_name'])
+                // $("input[name='location_name']").val(mydata['location_name'])
                 $("input[name='start_date']").val(mydata['start_date'])
                 $("input[name='end_date']").val(mydata['end_date'])
                 $("input[name='priority']").val(mydata['priority'])
@@ -806,7 +792,7 @@ if (isset($_POST['companyId'])) {
                 $("input[name='phone_number']").val("")
                 $("input[name='primary_contact']").val("")
                 $("input[name='home_number']").val("")
-                $("input[name='location_name']").val("")
+                // $("input[name='location_name']").val("")
                 $("input[name='start_date']").val("")
                 $("input[name='end_date']").val("")
                 $("input[name='priority']").val("")
