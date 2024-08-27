@@ -167,14 +167,34 @@ if (isset($_GET['delete-record'])) {
         <!-- footer start -->
 
         <? include("./includes/views/footer.php"); ?>
-        <? include("./includes/views/footerjs.php"); ?>
+
         <!-- footer end -->
 
     </div>
-
+    <div class="modal fade" id="delete_record" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header" style="background:#fd2752">
+                    <h5 class="modal-title" id="exampleModalLabel">Are you sure?</h5>
+                    <button type="button" class="btn btn-danger close-model" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">This action cannot be reversed.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-model" data-dismiss="modal">No</button>
+                    <a href="#sd" id="delete-project">
+                        <button type="button" class="btn btn-danger">Yes</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- main content end -->
 
-    <div class="modal fade" id="create_record_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="create_record_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabe1l">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -228,6 +248,7 @@ if (isset($_GET['delete-record'])) {
                                     <div>
                                         <input type="submit" name="create_package" value="Submit" class="btn btn-primary" id="submitBtn">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancel_btn">Cancel</button>
+                                        <!-- <button  class="btn btn-danger" id="delate_btn" style="display: none;"> Delete</button> -->
                                         <input type="submit" name="delete_package" value="Delete" id="btn-delete-event" class="btn btn-danger">
                                         <input type="submit" name="create_package" value="Update" class="btn btn-success" id="updateBtn" style="display: none;">
                                     </div>
@@ -304,6 +325,7 @@ if (isset($_GET['delete-record'])) {
             </div>
         </div>
     </div>
+    <? include("./includes/views/footerjs.php"); ?>
     <!-- event modal end -->
 
     <script src="assets/vendor/js/jquery-3.6.0.min.js"></script>
@@ -484,7 +506,6 @@ if (isset($_GET['delete-record'])) {
                     this.$btnDeleteEvent.hide(),
                     this.$updateBtn.hide(),
                     this.$submitBtn.show(),
-
                     this.$modalTitle.text("Add New Event"),
 
                     this.$modal.show(),
@@ -656,7 +677,8 @@ if (isset($_GET['delete-record'])) {
 
                     l(
 
-                        a.$btnDeleteEvent.on("click", function(e) {
+                        // a.$btnDeleteEvent.on("click", function(e) {
+                        $('#delete-project').on("click", function(e) {
                             e.preventDefault();
 
                             if (a.$selectedEvent) {
@@ -670,7 +692,7 @@ if (isset($_GET['delete-record'])) {
                                         event_id: a.$selectedEvent.id
                                     },
                                     success: function(response) {
-
+                                        $('#delete_record').modal('hide');
                                         console.log(response);
                                     },
                                     error: function(xhr, status, error) {
@@ -734,6 +756,29 @@ if (isset($_GET['delete-record'])) {
             });
 
         })();
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('.close-model').on('click', function() {
+                
+                $('#delete_record').modal('hide');
+                location.reload(); // Refresh the page
+            });
+
+            $("#delete_record").on('click', function(e) {
+                $('#create_record_modal').modal('hide');
+            });
+            // Handle delete button click
+            $('.btn-danger').on('click', function(event) {
+                event.preventDefault();
+                $('#create_record_modal').modal('hide').removeClass('show').css('display', 'none');
+
+                $('#delete_record').modal("show"); // Show the warning modal
+            });
+
+
+        });
     </script>
 
 </body>

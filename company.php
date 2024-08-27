@@ -21,6 +21,9 @@ if (isset($_POST['create_package'])) {
     $phone_number = escape($_POST['phone_number']);
     $address = escape($_POST['address']);
     $email = escape($_POST['email']);
+    // $address = escape($_POST['address']);
+    $city = escape($_POST['city']);
+    $zip_code = escape($_POST['zip_code']);
     // $contact_name = escape($_POST['contact_name']);
     $contact_name = isset($_POST['contact_name']) ? implode(',', $_POST['contact_name']) : '';
     $account_status = escape($_POST['account_status']);
@@ -30,9 +33,9 @@ if (isset($_POST['create_package'])) {
     if ($actionId == "") {
         $id = generateRandomString();
         $actionId = $id;
-        $query = "insert into jeoXillityCrm_parent_company set id='$id' , site_name='$site_name', phone_number='$phone_number', address='$address', email='$email', contact_name='$contact_name', account_status='$account_status', internal_notes='$internal_notes', historic_tickets='$historic_tickets', security_pin='$security_pin', timeAdded='$timeAdded', userId='$session_userId' ";
+        $query = "insert into jeoXillityCrm_parent_company set id='$id' , site_name='$site_name', phone_number='$phone_number',  email='$email', address='$address', city='$city', zip_code='$zip_code', contact_name='$contact_name', account_status='$account_status', internal_notes='$internal_notes', historic_tickets='$historic_tickets', security_pin='$security_pin', timeAdded='$timeAdded', userId='$session_userId' ";
     } else {
-        $query = "update jeoXillityCrm_parent_company set id='$actionId' , site_name='$site_name', phone_number='$phone_number', address='$address', email='$email', contact_name='$contact_name', account_status='$account_status', internal_notes='$internal_notes', historic_tickets='$historic_tickets', security_pin='$security_pin' where id='$actionId'";
+        $query = "update jeoXillityCrm_parent_company set id='$actionId' , site_name='$site_name', phone_number='$phone_number',  email='$email', address='$address', city='$city', zip_code='$zip_code', contact_name='$contact_name', account_status='$account_status', internal_notes='$internal_notes', historic_tickets='$historic_tickets', security_pin='$security_pin' where id='$actionId'";
     }
     runQuery($query);
     $file = storeFile($_FILES['file']);
@@ -40,7 +43,6 @@ if (isset($_POST['create_package'])) {
         $query = "update jeoXillityCrm_parent_company set file='$file' where id='$actionId'";
         runQuery($query);
     }
-
     header("Location: ?" . generateUrlParams_return(["m" => "Data was saved successfully!", "type" => "success"]));
     exit();
 }
@@ -54,9 +56,7 @@ if (isset($_GET['delete-record'])) {
 
 <!DOCTYPE html>
 <html lang="en" data-menu="vertical" data-nav-size="nav-default">
-
 <head><? include("./includes/views/head2.php"); ?></head>
-
 <body class="body-padding body-p-top">
     <!-- preloader start -->
     <div class="preloader d-none">
@@ -221,6 +221,9 @@ if (isset($_GET['delete-record'])) {
                                     <th>Phone number</th>
                                     <th>Location</th>
                                     <th>Email</th>
+                                    <!-- <th>Address</th>
+                                    <th>City</th>
+                                    <th>Zip Code</th> -->
                                     <th>Contact name</th>
                                     <th>Account status</th>
                                     <th>Internal notes</th>
@@ -287,7 +290,6 @@ if (isset($_GET['delete-record'])) {
                             </tbody>
                         </table>
                     </div>
-
                     <div class="table-bottom-control"></div>
                 </div>
             </div>
@@ -297,7 +299,6 @@ if (isset($_GET['delete-record'])) {
         <!-- footer end -->
     </div>
     <!-- main content end -->
-
 
     <!-- add new task modal -->
     <div class="modal fade" id="create_record_modal" tabindex="-1" aria-labelledby="addTaskModalLabel" aria-hidden="true">
@@ -352,6 +353,26 @@ if (isset($_GET['delete-record'])) {
                                     <option value="In_progress">In Progress</option>
                                 </select>
                             </div>
+                            <div class="col-sm-4">
+                                <label class="form-label">Address</label>
+                                <input type="text" name="address" id="addTaskName" class="form-control form-control-sm" placeholder="Address">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label">City</label>
+                                <input type="text" name="city" id="addTaskName" class="form-control form-control-sm" placeholder="City">
+                            </div>
+                            <div class="col-sm-4">
+                                <label class="form-label">Zip Code</label>
+                                <input type="number" name="zip_code" id="addTaskName" class="form-control form-control-sm" placeholder="Zip Code">
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="business_date" class="form-label">Business Date</label>
+                                <input type="date" name="business_date" id="business_date" class="form-control form-control-sm" placeholder="Business Date" onchange="updateBusinessHours()">
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="timeSlot" class="form-label">Business Hours</label>
+                                <div id="timeSlot" class="form-control form-control-sm">Select a date to see business hours</div>
+                            </div>
                             <div class="col-12">
                                 <label for="addTaskAttachment" class="form-label">Attach File</label>
                                 <input type="file" name="file" id="addTaskAttachment" class="form-control form-control-sm">
@@ -378,8 +399,6 @@ if (isset($_GET['delete-record'])) {
                                     <? } ?>
                                 </select>
                             </div> -->
-
-
                             <div class="col-sm-6">
                                 <label for="addTaskNumber" class="form-label">Security Pin</label>
                                 <input type="number" name="security_pin" id="addTaskNumber" class="form-control form-control-sm" placeholder="Security Pin">
@@ -410,8 +429,6 @@ if (isset($_GET['delete-record'])) {
 
 <script>
     $(document).ready(function() {
-
-
         $("#create_record_modal").on('show.bs.modal', function(e) {
             var mydata = $(e.relatedTarget).data('mydata');
             console.log("mydata->", mydata);
@@ -422,10 +439,12 @@ if (isset($_GET['delete-record'])) {
                 $("input[name='phone_number']").val(mydata['phone_number'])
                 $("input[name='address']").val(mydata['address'])
                 $("input[name='email']").val(mydata['email'])
+                // $("input[name='address']").val(mydata['address'])
+                // $("input[name='city']").val(mydata['city'])
+                // $("input[name='zip_code']").val(mydata['zip_code'])
                 $("input[name='contact_name']").val(mydata['contact_name'])
                 $("input[name='account_status']").val(mydata['account_status'])
                 $("input[name='internal_notes']").val(mydata['internal_notes'])
-
                 $("input[name='historic_tickets']").val(mydata['historic_tickets'])
                 $("input[name='security_pin']").val(mydata['security_pin'])
                 $("input[name='actionId']").val(mydata['id'])
@@ -435,16 +454,55 @@ if (isset($_GET['delete-record'])) {
                 $("input[name='phone_number']").val("")
                 $("input[name='address']").val("")
                 $("input[name='email']").val("")
+                // $("input[name='address']").val("")
+                // $("input[name='city']").val("")
+                // $("input[name='zip_code']").val("")
                 $("input[name='contact_name']").val("")
                 $("input[name='account_status']").val("")
                 $("input[name='internal_notes']").val("")
                 $("input[name='historic_tickets']").val("")
                 $("input[name='security_pin']").val("")
-
                 $("input[name='actionId']").val("")
             }
         });
     })
 </script>
 
+<script>
+    function updateBusinessHours() {
+        const dateInput = document.getElementById('business_date');
+        const timeSlot = document.getElementById('timeSlot');
+        const selectedDate = new Date(dateInput.value);
+        const day = selectedDate.getDay();
+        if (!isNaN(day)) {
+            if (day >= 1 && day <= 5) { // Monday to Friday
+                timeSlot.textContent = '09 AM to 06 PM';
+            } else if (day === 6) { // Saturday
+                timeSlot.textContent = '09 AM to 01 PM';
+            } else if (day === 0) { // Sunday
+                timeSlot.textContent = 'OFF';
+            } else {
+                timeSlot.textContent = '';
+            }
+        } else {
+            timeSlot.textContent = '';
+        }
+    }
+
+    function restrictDateInput() {
+        const dateInput = document.getElementById('business_date');
+        dateInput.addEventListener('input', function() {
+            const selectedDate = new Date(this.value);
+            const day = selectedDate.getDay();
+            if (day === 0) {
+                this.setCustomValidity('Sunday is Off. Please select a date between Monday and Saturday.');
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+    }
+    window.onload = function() {
+        restrictDateInput();
+    }
+</script>
 </html>

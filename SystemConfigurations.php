@@ -959,7 +959,7 @@ if (isset($_GET['delete-template'])) {
                                 <div class="col-md-8">
                                     <select name="priority" class="form-select" data-placeholder="Select Priority">
                                         <option value="">Select Priority</option>
-                                        <?php $result = getAll($con, "select * from jeoxillitycrm_task_priorities");
+                                        <?php $result = getAll($con, "select * from jeoxillitycrm_task_statuses");
                                          foreach ($result as $index => $priority) { ?>
                                         <option value="<?php echo $priority['name']; ?>"><?php echo $priority['name']; ?></option>
                                         <?php } ?>
@@ -975,7 +975,7 @@ if (isset($_GET['delete-template'])) {
                                 <div class="col-md-8">
                                     <select name="status" class="form-select" data-placeholder="Select Ticket Status">
                                         <option value="">Select Ticket Status</option>
-                                        <?php $result = getAll($con, "select * from jeoxillitycrm_task_priorities");
+                                        <?php $result = getAll($con, "select * from jeoxillitycrm_task_status");
                                          foreach ($result as $index => $status) { ?>
                                         <option value="<?php echo $status['name']; ?>"><?php echo $status['name']; ?></option>
                                         <?php } ?>

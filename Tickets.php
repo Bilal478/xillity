@@ -48,6 +48,26 @@ if (isset($_GET['delete-record'])) {
 }
 
 
+if (isset($_POST['filter'])) {
+    $status = isset($_POST['status']) ? escape($_POST['status']) : '';
+    $priority = isset($_POST['priority']) ? escape($_POST['priority']) : '';
+
+    // Construct the query with filters
+    $query = "SELECT * FROM jeoXillityCrm_tickets WHERE 1=1";
+    if ($status != '') {
+        $query .= " AND status = '$status'";
+    }
+    if ($priority != '') {
+        $query .= " AND priority = '$priority'";
+    }
+
+    // Execute the query
+    $results = getAll($con, $query);
+} else {
+    // Default query to display all records
+    $query = "select * from jeoXillityCrm_tickets t order by t.timeAdded desc";
+    $results = getAll($con, $query);
+}
 if (isset($_POST['site_names'])) {
     $siteName = $_POST['site_names'];
     $query = "SELECT * FROM jeoXillityCrm_sites WHERE site_name = '$siteName'";
@@ -169,48 +189,58 @@ if (isset($_POST['companyId'])) {
                         <div class="table-filter-option">
                             <div class="row g-3">
                                 <div class="col-xl-10 col-md-10 col-9 col-xs-12">
-                                    <div class="row g-3">
+                                    <div class="row g-3 align-items-center">
                                         <div class="col">
-                                            <form class="row g-2">
-                                                <div class="col">
-                                                    <select class="form-control form-control-sm" data-placeholder="Bulk action">
+                                            <form class="row g-2" method="post" action="">
+                                                <div class="col-auto">
+                                                    <select class="form-control form-control-sm" data-placeholder="Bulk action" name="bulk_action">
                                                         <option value="">Bulk action</option>
                                                         <option value="0">Move to trash</option>
                                                     </select>
                                                 </div>
-                                                <div class="col">
+                                                <div class="col-auto">
                                                     <button class="btn btn-sm btn-primary w-100">Apply</button>
                                                 </div>
                                             </form>
                                         </div>
                                         <div class="col">
-                                            <select class="form-control form-control-sm" data-placeholder="Select Status">
-                                                <option value="">Select Status</option>
-                                                <option value="0">Not Started</option>
-                                                <option value="1">Pending</option>
-                                                <option value="2">On Hold</option>
-                                                <option value="3">In Progress</option>
-                                                <option value="4">Completed</option>
-                                            </select>
+                                            <form class="row g-2" method="post" action="">
+                                                <div class="col-auto">
+                                                    <select class="form-control form-control-sm" data-placeholder="Select Status" name="status">
+                                                        <option value="">Select Status</option>
+                                                        <?php
+                                                        $result = getAll($con, "SELECT * FROM jeoxillitycrm_task_statuses");
+                                                        foreach ($result as $status) { ?>
+                                                            <option value="<?php echo $status['name']; ?>" <?php echo (isset($_POST['status']) && $_POST['status'] == $status['name']) ? 'selected' : ''; ?>><?php echo $status['name']; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <!-- <div class="col">
+                                                    <input type="text" class="form-control form-control-sm table-date-range-filter">
+                                                </div> -->
+                                                <div class="col-auto">
+                                                    <select class="form-control form-control-sm" data-placeholder="Select Priority" name="priority">
+                                                        <option value="">Select Priority</option>
+                                                        <?php
+                                                        $result = getAll($con, "SELECT * FROM jeoxillitycrm_task_priorities");
+                                                        foreach ($result as $priority) { ?>
+                                                            <option value="<?php echo $priority['name']; ?>" <?php echo (isset($_POST['priority']) && $_POST['priority'] == $priority['name']) ? 'selected' : ''; ?>><?php echo $priority['name']; ?></option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button class="btn btn-sm btn-primary" name="filter"><i class="fa-light fa-filter"></i> Filter</button>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <button type="button" class="btn btn-sm btn-secondary" onclick="clearFilters()">Clear Filters</button>
+                                                </div>
+                                            </form>
                                         </div>
-                                        <div class="col">
-                                            <input type="text" class="form-control form-control-sm table-date-range-filter" readonly>
-                                        </div>
-                                        <div class="col">
-                                            <select class="form-control form-control-sm" data-placeholder="Select Priority">
-                                                <option value="">Select Priority</option>
-                                                <option value="0">Low</option>
-                                                <option value="1">Medium</option>
-                                                <option value="2">High</option>
-                                                <option value="3">Urgent</option>
-                                            </select>
-                                        </div>
-                                        <div class="col">
-                                            <button class="btn btn-sm btn-primary"><i class="fa-light fa-filter"></i> Filter</button>
-                                        </div>
-                                        <div class="col">
+                                        <!-- <div class="col-auto">
                                             <div class="digi-dropdown dropdown">
-                                                <button class="btn btn-sm btn-icon btn-primary" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false"><i class="fa-regular fa-plus"></i></button>
+                                                <button class="btn btn-sm btn-icon btn-primary" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                                    <i class="fa-regular fa-plus"></i>
+                                                </button>
                                                 <ul class="dropdown-menu">
                                                     <li class="dropdown-title">Filter Options</li>
                                                     <li>
@@ -233,13 +263,14 @@ if (isset($_POST['companyId'])) {
                                                     </li>
                                                 </ul>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                                 <div class="col-xl-2 col-md-2 col-3 col-xs-12 d-flex justify-content-end">
                                     <div id="employeeTableLength"></div>
                                 </div>
                             </div>
+
                         </div>
                         <table class="table table-dashed table-hover digi-dataTable task-table table-striped" id="taskTable">
                             <thead>
@@ -259,8 +290,7 @@ if (isset($_POST['companyId'])) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $query = "select * from jeoXillityCrm_tickets t order by t.timeAdded desc";
-                                $results = getAll($con, $query);
+                                <?php
                                 foreach ($results as $row) {
                                     $status = strtolower($row['status']);
                                     $statuscolor = ($status == 'pending') ? 'danger' : ($status == 'complete' ? 'success' : ($status == 'in-progress' ? 'primary' : ''));
@@ -706,6 +736,14 @@ if (isset($_POST['companyId'])) {
     <? include("./includes/views/footerjs.php"); ?>
 </body>
 
+<script>
+    function clearFilters() {
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => form.reset());
+        // Optionally, you can submit the form to reload the page without filters
+        forms[1].submit(); // Assuming the second form is the filter form
+    }
+</script>
 <script>
     $(document).ready(function() {
         $("#companySelect").on("change", function() {
