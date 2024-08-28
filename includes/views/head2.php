@@ -25,6 +25,7 @@
 
 <link rel="shortcut icon" href="<?echo $g_modules_global['faviconlogo']?>" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     a{

@@ -16,28 +16,45 @@ array(
 
 $status_options = convertArrayToIndexArray(["Active", "Inactive"]);
 
-if (isset($_POST['create_package'])) {
-    $actionId = escape(($_POST['actionId']));
-    $name = escape($_POST['name']);
+
+if (isset($_POST['check_email'])) {
     $email = escape($_POST['email']);
-    $country = escape($_POST['country']);
-    $city = escape($_POST['city']);
-    $region = escape($_POST['region']);
-    $postal_code = escape($_POST['postal_code']);
-    $status = escape($_POST['status']);
+
+    // Query to check if the email exists, excluding the current record if it's an update
+    $query = "SELECT COUNT(*) as count FROM jeoXillityCrm_users WHERE email='$email'";
+
+
+    $result = getOne($con, $query);
+
+    if ($result > 0) {
+        echo json_encode(['exists' => true]);
+    } else {
+        echo json_encode(['exists' => false]);
+    }
+    exit();
+}
+
+if (isset($_POST['create_package'])) {
+    parse_str($_POST['formData'], $form_data);
+
+    $actionId = escape(($form_data['actionId']));
+    $name = escape($form_data['name']);
+    $email = escape($form_data['email']);
+    $country = escape($form_data['country']);
+    $city = escape($form_data['city']);
+    $region = escape($form_data['region']);
+    $postal_code = escape($form_data['postal_code']);
+    $status = escape($form_data['status']);
     $role = 'customer';
-    $post_office = escape($_POST['postcode']);
-    $city = escape($_POST['city']);
-    $country = escape($_POST['country']);
+    $post_office = escape($form_data['postcode']);
+    $city = escape($form_data['city']);
+    $country = escape($form_data['country']);
 
-    
-    
-    
 
-    $phone = escape($_POST['phone']);
-    $relationship = escape($_POST['relationship']);
-    $security_pin = escape($_POST['security_pin']);
-    $notes = escape($_POST['notes']);
+    $phone = escape($form_data['phone']);
+    $relationship = escape($form_data['relationship']);
+    $security_pin = escape($form_data['security_pin']);
+    $notes = escape($form_data['notes']);
 
 
     if (isset($_POST['password'])) {
@@ -55,8 +72,8 @@ if (isset($_POST['create_package'])) {
     }
     runQuery($query);
 
-    header("Location: ?" . generateUrlParams_return(["m" => "Data was saved successfully!", "type" => "success"]));
-    exit();
+    // header("Location: ?" . generateUrlParams_return(["m" => "Data was saved successfully!", "type" => "success"]));
+    // exit();
 }
 
 if (isset($_GET['delete-customer'])) {
@@ -214,7 +231,6 @@ if (isset($_GET['delete-record'])) {
                                                 <span class="badge bg-success">Active</span>
                                             <?php endif; ?>
                                         </td>
- 
                                     </tr>
                                 <? } ?>
                             </tbody>
@@ -314,9 +330,65 @@ if (isset($_GET['delete-record'])) {
 
     <script>
         $(document).ready(function() {
+
+            $('form').on('submit', function(e) {
+                e.preventDefault();
+
+                var formData = $(this).serialize();
+                var email = $("input[name='email']").val();
+                var actionId = $("input[name='actionId']").val();
+
+                if (email == "") {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Please Add Email addrres',
+                    });
+                }
+              else{
+                $.ajax({
+                    url: '', // same page
+                    type: 'POST',
+                    data: {
+                        check_email: true,
+                        email: email,
+                        actionId: actionId
+                    },
+                    success: function(response) {
+                        var data = JSON.parse(response);
+                        if (data.exists && (actionId == "")) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'This email already exists!',
+                            });
+                        } else {
+                            // Proceed with form submission if the email doesn't exist
+                            $.ajax({
+                                url: '', // same page
+                                type: 'POST',
+                                data: {
+                                    formData: formData, // Spread the existing form data
+                                    create_package: true // Add the create_package key with a value of true
+                                },
+                                success: function(response) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success!',
+                                        text: 'Customer saved successfully!',
+                                    }).then(() => {
+                                        location.reload(); // Reload the page or close the modal as needed
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+              }
+            });
+
             $("#create_record_modal").on('show.bs.modal', function(e) {
                 var mydata = $(e.relatedTarget).data('mydata');
-                console.log("mydata->", mydata);
                 $("input[type='checkbox']").prop('checked', false);
                 if (mydata != null) {
                     $("#modelTitle").html("Update");
