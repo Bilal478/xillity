@@ -222,7 +222,6 @@ if (isset($_GET['invoiceIdDuplicate'])) {
 </head>
 
 <body class="body-padding body-p-top">
-
     <!-- preloader start -->
 
     <div class="preloader d-none">
