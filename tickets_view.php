@@ -151,6 +151,39 @@ if (isset($_GET['delete-record'])) {
                                                 <span class="info-value"><?php echo htmlspecialchars($ticket_info['end_date']); ?></span>
                                             </li>
                                             <li class="col-md-4">
+                                                <span class="info-label">Age:</span>
+                                                <?php
+                                                // Check if 'start_date' exists
+                                                if (!empty($ticket_info['start_date'])) {
+                                                    // Convert the start date to a DateTime object
+                                                    $startDateTime = DateTime::createFromFormat('d M, y', $ticket_info['start_date']);
+
+                                                    // Get the current date
+                                                    $currentDateTime = new DateTime(); // Current date
+
+                                                    // Calculate the difference
+                                                    $interval = $startDateTime->diff($currentDateTime);
+
+                                                    if ($interval->y > 0) {
+                                                        // If the age is more than a year
+                                                        $age = $interval->format('%y years, %m months');
+                                                    } elseif ($interval->m > 0) {
+                                                        // If the age is more than a month but less than a year
+                                                        $age = $interval->format('%m months, %d days');
+                                                    } else {
+                                                        // If the age is less than a month
+                                                        $age = $interval->format('%d days');
+                                                    }
+                                                } else {
+                                                    // Handle cases where 'start_date' is not available
+                                                    $age = " ";
+                                                }
+                                                ?>
+
+                                                <span class="info-value"><?php echo $age; ?></span>
+                                            </li>
+
+                                            <li class="col-md-4">
                                                 <span class="info-label">Status:</span>
                                                 <span class="info-value"><?php echo htmlspecialchars($ticket_info['status']); ?></span>
                                             </li>

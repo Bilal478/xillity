@@ -4,6 +4,8 @@ if (isset($_GET['demo'])) {
 }
 
 if ($logged == 1 && $_SESSION['loginAuthCorrect']) {
+    $query = "insert into jeoXillityCrm_user_activites set  user_id='$session_userId', action='Your account is logged in'";
+    runQuery($query);
 	header("Location: ./crm-dashboard.php");
 	exit();
 }

@@ -14,7 +14,9 @@ if(isset($_GET['logout'])){
 
     session_destroy();
     $logged=0;
-    
+
+    $query = "insert into jeoXillityCrm_user_activites set  user_id='$session_userId', action='Your account is logged out'";
+    runQuery($query);
     header("Location: ./login.php");
 }
 

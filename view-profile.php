@@ -203,82 +203,55 @@ if (isset($_FILES['profile_pic'])) {
                     <div class="panel-body">
                         <div class="user-activity">
                             <ul>
-                                <li>
-                                    <div class="left">
-                                        <span class="user-activity-title">Your account is logged in</span>
-                                        <span class="user-activity-details">From "RuthDyer" UiDesign Leave</span>
-                                        <span class="user-activity-date">Monday 12 Jan 2020.</span>
+                                <?php
 
-                                    </div>
+                                $query = "SELECT * FROM jeoXillityCrm_user_activites where user_id='$session_userId' ORDER BY id DESC LIMIT 5";
+                                $results = mysqli_query($con, $query);
 
-                                    <div class="right">
+                                while ($row = mysqli_fetch_assoc($results)) { ?>
+                                    <li>
+                                        <div class="left">
+                                            <span class="user-activity-title"><?php echo $row['action']; ?></span>
+                                            <span class="user-activity-date"><?php echo date('l d M Y', strtotime($row['created_at'])); ?></span>
 
-                                        <span class="user-activity-time">6 min ago</span>
+                                        </div>
 
-                                    </div>
+                                        <div class="right">
 
-                                </li>
+                                            <?php
 
-                                <li>
+                                            // Convert the string to DateTime object
+                                            $givenDate = new DateTime($row['created_at']);
+                                            $currentDate = new DateTime(); // Current date and time
 
-                                    <div class="left">
+                                            // Calculate the difference
+                                            $interval = $currentDate->diff($givenDate);
 
-                                        <span class="user-activity-title">Current language has been changed</span>
+                                            // Initialize the result variable
+                                            $timeAgo = '';
 
-                                        <span class="user-activity-details">From "RuthDyer" UiDesign Leave</span>
+                                            if ($interval->y > 0) {
+                                                $timeAgo = $interval->y . ' year' . ($interval->y > 1 ? 's' : '') . ' ago';
+                                            } elseif ($interval->m > 0) {
+                                                $timeAgo = $interval->m . ' month' . ($interval->m > 1 ? 's' : '') . ' ago';
+                                            } elseif ($interval->d > 0) {
+                                                $timeAgo = $interval->d . ' day' . ($interval->d > 1 ? 's' : '') . ' ago';
+                                            } elseif ($interval->h > 0) {
+                                                $timeAgo = $interval->h . ' hour' . ($interval->h > 1 ? 's' : '') . ' ago';
+                                            } elseif ($interval->i > 0) {
+                                                $timeAgo = $interval->i . ' minute' . ($interval->i > 1 ? 's' : '') . ' ago';
+                                            } else {
+                                                $timeAgo = 'just now';
+                                            }
 
-                                        <span class="user-activity-date">Monday 12 Jan 2020.</span>
 
-                                    </div>
+                                            ?>
+                                            <span class="user-activity-time"><?php echo $timeAgo; ?></span>
 
-                                    <div class="right">
+                                        </div>
 
-                                        <span class="user-activity-time">16 min ago</span>
-
-                                    </div>
-
-                                </li>
-
-                                <li>
-
-                                    <div class="left">
-
-                                        <span class="user-activity-title">Leave Approval Request</span>
-
-                                        <span class="user-activity-details">From "RuthDyer" UiDesign Leave</span>
-
-                                        <span class="user-activity-date">Monday 12 Jan 2020.</span>
-
-                                    </div>
-
-                                    <div class="right">
-
-                                        <span class="user-activity-time">6 min ago</span>
-
-                                    </div>
-
-                                </li>
-
-                                <li>
-
-                                    <div class="left">
-
-                                        <span class="user-activity-title">Asked about this product</span>
-
-                                        <span class="user-activity-details">From "RuthDyer" UiDesign Leave</span>
-
-                                        <span class="user-activity-date">Monday 12 Jan 2020.</span>
-
-                                    </div>
-
-                                    <div class="right">
-
-                                        <span class="user-activity-time">16 min ago</span>
-
-                                    </div>
-
-                                </li>
-
+                                    </li>
+                                <?php } ?>
                             </ul>
 
                         </div>
@@ -287,6 +260,116 @@ if (isset($_FILES['profile_pic'])) {
 
                 </div>
 
+            </div>
+            <?php
+
+            $query = "SELECT * FROM jeoXillityCrm_tickets WHERE CONCAT(',', assign, ',') LIKE '%," . $getCustomer['id'] . ",%'";
+            $results = mysqli_query($con, $query);
+
+            $openTickets = [];
+            $overdueTickets = [];
+            $closedTickets = [];
+
+            while ($row = mysqli_fetch_assoc($results)) {
+                // Categorize tickets based on their status
+                $endDateTime = DateTime::createFromFormat('d M, y', $row['end_date']);
+                $currentDateTime = new DateTime();
+
+                if ($row['status'] == 'Pending') {
+                    $openTickets[] = $row;
+                } elseif (($endDateTime < $currentDateTime) && ($row['status'] != 'Complete')) {
+                    $overdueTickets[] = $row;
+                } elseif ($row['status'] == 'Complete') {
+                    $closedTickets[] = $row;
+                }
+            }
+            ?>
+
+            <div class="col-lg-4 col-6 col-xs-12">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h5>Open Tickets</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="">
+                            <?php if (!empty($openTickets)) { ?>
+                                <ul>
+                                    <?php foreach ($openTickets as $ticket) { ?>
+                                        <a class="link-light" href="./tickets_view.php?id=<?php echo $ticket['id']; ?>">
+                                            <li>
+                                                <div class="left">
+                                                    <span class="user-activity-title"><b>Ticket ID:</b> <?php echo $ticket['id'] ?></span>
+                                                    <span class="user-activity-title"><b>Title: </b> <?php echo $ticket['name'] ?></span>
+                                                </div>
+                                            </li>
+                                        </a>
+                                        <hr>
+                                    <?php } ?>
+                                </ul>
+                            <?php } else { ?>
+                                <p>No open tickets found.</p>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-6 col-xs-12">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h5>Overdue Tickets</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="">
+                            <?php if (!empty($overdueTickets)) { ?>
+                                <ul>
+                                    <?php foreach ($overdueTickets as $ticket) { ?>
+                                        <a class="link-light" href="./tickets_view.php?id=<?php echo $ticket['id']; ?>">
+                                            <li>
+                                                <div class="left">
+                                                    <span class="user-activity-title"><b>Ticket ID:</b> <?php echo $ticket['id'] ?></span>
+                                                    <span class="user-activity-title"><b>Title: </b> <?php echo $ticket['name'] ?></span>
+                                                </div>
+                                            </li>
+                                        </a>
+                                        <hr>
+                                    <?php } ?>
+                                </ul>
+                            <?php } else { ?>
+                                <p>No overdue tickets found.</p>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-6 col-xs-12">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h5>Closed Tickets</h5>
+                    </div>
+                    <div class="panel-body">
+                        <div class="">
+                            <?php if (!empty($closedTickets)) { ?>
+                                <ul>
+                                    <?php foreach ($closedTickets as $ticket) { ?>
+                                        <a class="link-light" href="./tickets_view.php?id=<?php echo $ticket['id']; ?>">
+                                            <li>
+                                                <div class="left">
+                                                    <span class="user-activity-title"><b>Ticket ID:</b> <?php echo $ticket['id'] ?></span>
+                                                    <span class="user-activity-title"><b>Title: </b> <?php echo $ticket['name'] ?></span>
+                                                </div>
+                                            </li>
+                                        </a>
+                                        <hr>
+                                    <?php } ?>
+                                </ul>
+                            <?php } else { ?>
+                                <p>No closed tickets found.</p>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>

@@ -319,17 +319,35 @@ if (isset($_POST['companyId'])) {
                                             ?>
                                         </td> -->
                                         <td>
-                                            <?php $assignedUsers = explode(',', $row['assign']);
-                                            $isSingleUser = count($assignedUsers) === 1; ?>
+                                            <?php
+                                            $assignedUsers = explode(',', $row['assign']);
+                                            $isSingleUser = count($assignedUsers) === 1;
+
+                                            // Prepare an array to hold user names
+                                            $userNames = [];
+
+                                            foreach ($assignedUsers as $userId) {
+                                                $userId = trim($userId);
+
+                                                // Query to get the user name based on user ID
+                                                $userQuery = "SELECT name FROM jeoxillitycrm_users WHERE id = '$userId'";
+                                                $userResult = mysqli_query($con, $userQuery);
+
+                                                if ($userResult) {
+                                                    $userRow = mysqli_fetch_assoc($userResult);
+                                                    $userNames[] = $userRow['name'];
+                                                }
+                                            }
+                                            ?>
                                             <div class="avatar-box">
-                                                <?php foreach ($assignedUsers as $user) : ?>
+                                                <?php foreach ($userNames as $userName) : ?>
                                                     <?php
-                                                    $user = trim($user);
                                                     if ($isSingleUser) {
-                                                        // $displayText = strtoupper(substr($user, 0, 4));
+                                                        $displayText = strtoupper(substr($userName, 0, 4)); // First 4 letters for a single user
                                                     } else {
-                                                        $displayText = strtoupper(substr($user, 0, 1));
-                                                    } ?>
+                                                        $displayText = strtoupper(substr($userName, 0, 1)); // First letter for multiple users
+                                                    }
+                                                    ?>
                                                     <div class="avatar avatar-sm bg-primary rounded-circle d-flex justify-content-center align-items-center text-white">
                                                         <span><?php echo $displayText; ?></span>
                                                     </div>
@@ -429,10 +447,11 @@ if (isset($_POST['companyId'])) {
                                 <label class="form-label">Department</label>
                                 <select name="department" class="form-control form-control-sm" data-placeholder="Select Department">
                                     <option value="">Select Department</option>
-                                    <option value="Bus">Bus</option>
-                                    <option value="Airplane">Airplane</option>
-                                    <option value="Taxi">Taxi</option>
-                                    <option value="Subway">Subway</option>
+                                    <?php
+                                    $result = getAll($con, "SELECT * FROM jeoxillitycrm_departments");
+                                    foreach ($result as $department) { ?>
+                                        <option value="<?php echo $department['name']; ?>"><?php echo $department['name']; ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
                             <div class="col-4 offset-1">
@@ -477,10 +496,11 @@ if (isset($_POST['companyId'])) {
                                 <label class="form-label">Priority</label>
                                 <select name="priority" class="form-control form-control-sm" data-placeholder="Select Priority">
                                     <option value="">Select Priority</option>
-                                    <option value="Low">Low</option>
-                                    <option value="Medium">Medium</option>
-                                    <option value="High">High</option>
-                                    <option value="Urgent">Urgent</option>
+                                    <?php
+                                    $result = getAll($con, "SELECT * FROM jeoxillitycrm_task_priorities");
+                                    foreach ($result as $priority) { ?>
+                                        <option value="<?php echo $priority['name']; ?>"><?php echo $priority['name']; ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
                             <!-- <div class="col-4 offset-1">
@@ -495,9 +515,11 @@ if (isset($_POST['companyId'])) {
                                 <label class="form-label">Ticket Status</label>
                                 <select name="status" class="form-control form-control-sm" data-placeholder="Select Ticket Status">
                                     <option value="">Select Ticket Status</option>
-                                    <option value="Pending">Pending</option>
-                                    <option value="Complete">Complete</option>
-                                    <option value="In_progress">In Progress</option>
+                                    <?php
+                                    $result = getAll($con, "SELECT * FROM jeoxillitycrm_task_statuses");
+                                    foreach ($result as $status) { ?>
+                                        <option value="<?php echo $status['name']; ?>"><?php echo $status['name']; ?></option>
+                                    <?php } ?>
                                 </select>
                             </div>
                             <!-- <div class="col-4 offset-1">
@@ -539,7 +561,7 @@ if (isset($_POST['companyId'])) {
                                     $sql = "SELECT * FROM jeoXillityCrm_users";
                                     $run = mysqli_query($con, $sql);
                                     while ($fet = mysqli_fetch_assoc($run)) { ?>
-                                        <option value="<?= $fet['name'] ?>"><?= $fet['name'] ?></option>
+                                        <option value="<?= $fet['id'] ?>"><?= $fet['name'] ?></option>
                                     <? } ?>
                                 </select>
                             </div>
