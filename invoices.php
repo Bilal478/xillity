@@ -1,4 +1,5 @@
-<? require("./global.php");
+<?
+require("./global.php");
 $primaryTableName = "Invoice";
 if (!checkGlobalPermission('enableInvoices')) {
     // 	header("Location: ./home.php?m=Oops! Error occured");
@@ -200,6 +201,16 @@ if (isset($_GET['invoiceIdDuplicate'])) {
     header("Location: ?m=Invoice was duplicated successfully.");
 }
 
+
+
+
+
+
+
+
+
+
+
 ?>
 <!DOCTYPE html>
 
@@ -216,6 +227,30 @@ if (isset($_GET['invoiceIdDuplicate'])) {
         .kt-invoice-1 .kt-invoice__footer .kt-invoice__bank .kt-invoice__item {
             margin-top: 4px;
         }
+
+        .search-container {
+            position: relative;
+            width: 300px;
+            margin-right: 10px;
+            margin-top: 29px;
+
+
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid  #1a3558;
+            border-radius: 10px;
+            background-color: #1a3558;
+            color: #fff;
+            height: 38px;
+        }
+
+        .search-box:focus {
+            outline: none;
+        }
+
     </style>
 
 
@@ -473,7 +508,7 @@ if (isset($_GET['invoiceIdDuplicate'])) {
 
                                             <!-- begin:: Content -->
                                             <a style="width:150px;" href="/invoice_pdf.php?view=<?php echo $view; ?>" class="mb-3 btn btn-primary" style="margin-bottom: 11px;">Download as PDF
-                    </a>
+                                            </a>
                                             <!--removed maxwidth 1000px-->
                                             <div id="elementID" class="kt-container w-100 kt-grid__item kt-grid__item--fluid" <? if ((isset($_GET['view']))) { ?>style="display: flex;justify-content: center;" <? } ?>>
 
@@ -686,6 +721,19 @@ if (isset($_GET['invoiceIdDuplicate'])) {
                     <? }
                     if (!(isset($_GET['view'])) && !isset($_GET['action'])) { ?>
                         <div class="d-flex align-items-center justify-content-sm-end mb-4 mr-sm-5">
+                            <div class="d-flex flex-column mr-sm-3 mb-sm-0 mb-3">
+
+                                <div class="search-container">
+                                    <input type="text" id="search-box" class="search-box" placeholder="Search by Title...">
+                                    
+                                    </button>
+                                </div>
+
+                            </div>
+
+
+
+
                             <form action="" method="get" class="d-flex align-items-center flex-column flex-sm-row">
                                 <div class="d-flex flex-column mr-sm-3 mb-sm-0 mb-3">
                                     <label for="" class="mb-1">Start Date</label>
@@ -732,7 +780,8 @@ if (isset($_GET['invoiceIdDuplicate'])) {
                                         <button type="submit" class="btn btn-danger btn-sm text-white ">Delete Bulk</button>
                                     <? } ?>
                                     <!--begin: Datatable -->
-                                    <table class="table table-striped- table-bordered table-hover table-checkable add-search" id="kt_table_1">
+
+                                    <table class="table table-striped- table-bordered table-hover table-checkable add-search" id="kt_table_1 results ">
                                         <thead>
                                             <tr>
                                                 <th>Invoice Id</th>
@@ -743,8 +792,11 @@ if (isset($_GET['invoiceIdDuplicate'])) {
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+
+                                        <tbody id="results-tbody">
                                             <?
+
+
                                             if (isset($_GET["start_date"])) {
                                                 $start_date = $_GET["start_date"];
 
@@ -811,7 +863,11 @@ if (isset($_GET['invoiceIdDuplicate'])) {
                                             <? } ?>
 
                                         </tbody>
+
+
+
                                     </table>
+
                                 </form>
                                 <!--end: Datatable -->
                             </div>
@@ -1037,6 +1093,28 @@ if (isset($_GET['invoiceIdDuplicate'])) {
                 button.innerHTML = "Download";
             });
         });
+    }
+
+    document.getElementById("search-box").addEventListener("input", function() {
+        let query = this.value.toLowerCase(); // Get search query
+        if (query.length === 0) {
+            // If query is empty, fetch all results
+            fetchResults('');
+        } else if (query.length > 2) {
+            // If query has more than 2 characters, trigger search
+            fetchResults(query);
+        }
+    });
+
+    function fetchResults(query) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', 'search_invoices.php?search=' + query, true);
+        xhr.onload = function() {
+            if (this.status === 200) {
+                document.getElementById('results-tbody').innerHTML = this.responseText;
+            }
+        };
+        xhr.send();
     }
 </script>
 

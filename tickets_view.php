@@ -270,6 +270,9 @@ if (isset($_GET['delete-record'])) {
                                     <input type="hidden" name="Ticket_id" value="<?php echo $t_id; ?>">
                                     <div class="col-12 mt-3 mb-3 d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary btn-md" name="create_package1">Add Comments</button>
+                                        <!-- Add this delete button after the comment list -->
+                                        <button type="button" class="btn btn-danger" id="delete-selected">Delete Selected</button>
+
                                     </div>
                                     <?php
 
@@ -283,6 +286,9 @@ if (isset($_GET['delete-record'])) {
                                     foreach ($results as $row) { ?>
                                         <div class="card mb-3">
                                             <div class="card-body">
+                                                <!-- Add a checkbox to select comments -->
+                                                <input type="checkbox" class="comment-checkbox" data-id="<?= $row['id']; ?>" />
+
                                                 <p class="card-text"><?php echo $row['comments_name'] ?></p>
                                                 <p class="card-text text-end"><?php echo $row['name'] ?></p>
                                                 <p class="card-text text-end">
@@ -302,6 +308,56 @@ if (isset($_GET['delete-record'])) {
                         </div>
             </div>
         </form>
+       <script>
+
+$(document).ready(function() {
+    $('#delete-selected').click(function() {
+        let selectedComments = [];
+        // Collect the IDs of selected comments
+        $('.comment-checkbox:checked').each(function() {
+            selectedComments.push($(this).data('id'));
+        });
+
+        if (selectedComments.length > 0) {
+            console.log("Selected comments:", selectedComments); // Log selected IDs
+
+            $.ajax({
+                url: 'delete_comments.php', // Your backend script for deleting comments
+                type: 'POST',
+                data: { commentIds: selectedComments },
+                success: function(response) {
+                    console.log("AJAX success response:", response); // Log the response from the backend
+
+                    // Ensure the response is parsed correctly
+                    if (typeof response === 'string') {
+                        response = JSON.parse(response);
+                    }
+
+                    if (response.success) {
+                        // Successfully deleted, now remove comments from DOM
+                        $('.comment-checkbox:checked').closest('.card').remove(); // Remove the selected comments from the DOM
+                        alert('Comments deleted successfully!');
+                    } else {
+                        console.log("Error deleting comments: ", response.message);
+                        alert('Error deleting comments: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('AJAX error:', error); // Log any error from the request
+                    alert('There was an error processing your request.');
+                }
+            });
+        } else {
+            alert('Please select at least one comment to delete.');
+        }
+    });
+});
+
+       </script>
+
+
+
+
 <?php
                     } else {
                         echo "No ticket found with the provided ID.";

@@ -1,5 +1,4 @@
-<? 
-
+<?php
 session_start();  // Start the session to handle messages
 require("./global.php");
 
@@ -50,32 +49,11 @@ if (isset($_GET['delete_article'])) {
     exit();
 }
 
-// Handle filtering and search query
+// Default sorting and filters
 $filter_category = isset($_GET['category']) ? mysqli_real_escape_string($con, $_GET['category']) : '';
 $search_query = isset($_GET['search']) ? mysqli_real_escape_string($con, $_GET['search']) : '';
-
-// Construct SQL query
-$query = "SELECT * FROM jeoxillitycrm_articles WHERE 1=1"; // Base query
-
-// Apply category filter if set
-if (!empty($filter_category)) {
-    $query .= " AND category = '$filter_category'";
-}
-
-// Apply search filter if set
-if (!empty($search_query)) {
-    $query .= " AND (title LIKE '%$search_query%' OR body LIKE '%$search_query%')";
-}
-
-$query .= " ORDER BY created_at DESC";
-$articles = mysqli_query($con, $query);
-
-
-// Default sorting: by 'created_at' in descending order
 $sort_by = isset($_GET['sort_by']) ? mysqli_real_escape_string($con, $_GET['sort_by']) : 'created_at';
 $order = isset($_GET['order']) && $_GET['order'] == 'asc' ? 'ASC' : 'DESC';
-
-// Define allowed columns for sorting to avoid SQL injection
 $allowed_columns = ['title', 'category', 'created_at'];
 
 // Ensure the 'sort_by' column is valid
@@ -83,108 +61,86 @@ if (!in_array($sort_by, $allowed_columns)) {
     $sort_by = 'created_at';
 }
 
-// Modify the SQL query to include the ORDER BY clause
-$query = "SELECT * FROM jeoxillitycrm_articles WHERE 1=1"; // Base query
-
-// Apply category filter if set
+// Construct SQL query for main display
+$query = "SELECT * FROM jeoxillitycrm_articles WHERE 1=1";
 if (!empty($filter_category)) {
     $query .= " AND category = '$filter_category'";
 }
-
-// Apply search filter if set
 if (!empty($search_query)) {
     $query .= " AND (title LIKE '%$search_query%' OR body LIKE '%$search_query%')";
 }
-
-// Add sorting to the query
 $query .= " ORDER BY $sort_by $order";
-
-// Execute the query
 $articles = mysqli_query($con, $query);
-
-
-
-
-
-
-
 ?>
 
 <!DOCTYPE html>
 <html lang="en" data-menu="vertical" data-nav-size="nav-default">
 
 <head>
-    <? include("./includes/views/head2.php"); ?>
+    <?php include("./includes/views/head2.php"); ?>
+    <style>
+        .search-container {
+            position: relative;
+            width: 300px;
+            margin-right: 10px;
+            margin-top: 29px;
+
+
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid  #1a3558;
+            border-radius: 10px;
+            background-color: #1a3558;
+            color: #fff;
+            height: 38px;
+        }
+
+        .search-box:focus {
+            outline: none;
+        }
+    </style>
 
     <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
-<style>
-    .cke_notification_warning {
-        display: none;
-    }
-    a {
-    text-decoration: none !important;
-}
+    <style>
+        .cke_notification_warning {
+            display: none;
+        }
 
-</style>
-
-
+        a {
+            text-decoration: none !important;
+        }
+    </style>
 </head>
 
 <body class="body-padding body-p-top">
+    <!-- header -->
+    <?php include("./includes/views/navbar.php"); ?>
+    <?php include("./includes/views/rightsidebar.php"); ?>
+    <?php include("./includes/views/leftmenu2.php"); ?>
 
-    <!-- preloader start -->
-
-    <div class="preloader d-none">
-
-        <div class="loader">
-
-            <span></span>
-
-            <span></span>
-
-            <span></span>
-
-        </div>
-
-    </div>
-    <!-- preloader end -->
-
-    <!-- header start -->
-    <? include("./includes/views/navbar.php"); ?>
-    <!-- header end -->
-
-
-    <!-- profile right sidebar start -->
-
-    <? include("./includes/views/rightsidebar.php"); ?>
-    <!-- right sidebar end -->
-
-    <!-- main sidebar start -->
-    <? include("./includes/views/leftmenu2.php"); ?>
-    <!-- main sidebar end -->
-
-    <!-- main content start -->
+    <!-- main content -->
     <div class="main-content">
-
- <!-- Message display -->
- <? if (isset($_SESSION['message'])): ?>
+        <!-- Message display -->
+        <?php if (isset($_SESSION['message'])): ?>
             <div class="alert alert-success" id="message">
                 <?= htmlspecialchars($_SESSION['message']); ?>
             </div>
-            <? unset($_SESSION['message']); // Clear the message 
+            <?php unset($_SESSION['message']); // Clear the message 
             ?>
-        <? endif; ?>
+        <?php endif; ?>
 
         <div class="row">
             <div class="col-12">
                 <div class="panel">
-
                     <div class="panel-header d-flex justify-content-between" style="align-items: center;">
                         <h5>Article Management</h5>
                         <div class="btn-box d-flex gap-2" style="align-items: center;">
                             <!-- Search Input -->
-                            <form method="get" class="d-inline-block" style="display: flex; align-items: center;">
-                                <input type="text" name="search" value="<?= isset($_GET['search']) ? htmlspecialchars($_GET['search']) : '' ?>" placeholder="Search articles..." class="form-control" style="height: 38px; width: 250px; padding: 0 10px; border-radius: 4px; border:none" />
+                            <form id="search-form" method="get" class="d-inline-block" style="display: flex; align-items: center;">
+                                <input type="text" name="search" id="search" placeholder="Search articles..." class="form-control" style="height: 40px; width: 250px; padding: 0 10px; border-radius: 4px; border:none" />
                             </form>
 
                             <!-- Add New Button -->
@@ -195,89 +151,29 @@ $articles = mysqli_query($con, $query);
                     </div>
 
                     <div class="panel-body">
-                        <table class="table table-dashed table-hover digi-dataTable task-table table-striped">
-
-                        <thead>
-    <tr>
-        <th>
-            <a href="?sort_by=title&order=<?= (isset($_GET['order']) && $_GET['order'] == 'asc' && $_GET['sort_by'] == 'title') ? 'desc' : 'asc'; ?>">
-                Title <?= (isset($_GET['sort_by']) && $_GET['sort_by'] == 'title') ? ($_GET['order'] == 'asc' ? '▲' : '▼') : ''; ?>
-            </a>
-        </th>
-        <th>
-            <a href="?sort_by=category&order=<?= (isset($_GET['order']) && $_GET['order'] == 'asc' && $_GET['sort_by'] == 'category') ? 'desc' : 'asc'; ?>">
-                Category <?= (isset($_GET['sort_by']) && $_GET['sort_by'] == 'category') ? ($_GET['order'] == 'asc' ? '▲' : '▼') : ''; ?>
-            </a>
-        </th>
-        <th>
-            <a href="?sort_by=created_at&order=<?= (isset($_GET['order']) && $_GET['order'] == 'asc' && $_GET['sort_by'] == 'created_at') ? 'desc' : 'asc'; ?>">
-                Created At <?= (isset($_GET['sort_by']) && $_GET['sort_by'] == 'created_at') ? ($_GET['order'] == 'asc' ? '▲' : '▼') : ''; ?>
-            </a>
-        </th>
-        <th>Actions</th>
-    </tr>
-</thead>
-
-                            <!-- <thead>
+                        <table class="table table-dashed table-hover digi-dataTable task-table table-striped" id="results">
+                            <thead>
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Category</th>
-                                    <th>Created At</th>
+                                    <th><a href="?sort_by=title&order=<?= (isset($_GET['order']) && $_GET['order'] == 'asc' && $_GET['sort_by'] == 'title') ? 'desc' : 'asc'; ?>">Title <?= (isset($_GET['sort_by']) && $_GET['sort_by'] == 'title') ? ($_GET['order'] == 'asc' ? '▲' : '▼') : ''; ?></a></th>
+                                    <th><a href="?sort_by=category&order=<?= (isset($_GET['order']) && $_GET['order'] == 'asc' && $_GET['sort_by'] == 'category') ? 'desc' : 'asc'; ?>">Category <?= (isset($_GET['sort_by']) && $_GET['sort_by'] == 'category') ? ($_GET['order'] == 'asc' ? '▲' : '▼') : ''; ?></a></th>
+                                    <th><a href="?sort_by=created_at&order=<?= (isset($_GET['order']) && $_GET['order'] == 'asc' && $_GET['sort_by'] == 'created_at') ? 'desc' : 'asc'; ?>">Created At <?= (isset($_GET['sort_by']) && $_GET['sort_by'] == 'created_at') ? ($_GET['order'] == 'asc' ? '▲' : '▼') : ''; ?></a></th>
                                     <th>Actions</th>
                                 </tr>
-                            </thead> -->
-
+                            </thead>
                             <tbody>
-    <?php while ($row = mysqli_fetch_assoc($articles)): ?>
-        <tr>
-            <td><?= htmlspecialchars($row['title']); ?></td>
-            <td><?= htmlspecialchars($row['category']); ?></td>
-            <td><?= htmlspecialchars($row['created_at']); ?></td>
-            <td>
-                <button class="btn btn-warning btn-sm edit-article-btn"
-                    data-id="<?= $row['id']; ?>"
-                    data-title="<?= htmlspecialchars($row['title']); ?>"
-                    data-category="<?= htmlspecialchars($row['category']); ?>"
-                    data-body="<?= htmlspecialchars($row['body']); ?>"
-                    data-bs-toggle="modal"
-                    data-bs-target="#createArticleModal"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-danger btn-sm delete-article-btn" data-id="<?= $row['id']; ?>" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"><i class="fas fa-trash"></i></button>
-                <button class="btn btn-info btn-sm view-article-btn"
-                    data-title="<?= htmlspecialchars($row['title']); ?>"
-                    data-body="<?= htmlspecialchars($row['body']); ?>"
-                    data-category="<?= htmlspecialchars($row['category']); ?>"
-                    data-bs-toggle="modal"
-                    data-bs-target="#viewArticleModal"><i class="fas fa-eye"></i></button>
-            </td>
-        </tr>
-    <?php endwhile; ?>
-</tbody>
-
-                            <!-- <tbody>
                                 <?php while ($row = mysqli_fetch_assoc($articles)): ?>
                                     <tr>
                                         <td><?= htmlspecialchars($row['title']); ?></td>
                                         <td><?= htmlspecialchars($row['category']); ?></td>
                                         <td><?= htmlspecialchars($row['created_at']); ?></td>
                                         <td>
-                                            <button class="btn btn-warning btn-sm edit-article-btn"
-                                                data-id="<?= $row['id']; ?>"
-                                                data-title="<?= htmlspecialchars($row['title']); ?>"
-                                                data-category="<?= htmlspecialchars($row['category']); ?>"
-                                                data-body="<?= htmlspecialchars($row['body']); ?>"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#createArticleModal"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-warning btn-sm edit-article-btn" data-id="<?= $row['id']; ?>" data-title="<?= htmlspecialchars($row['title']); ?>" data-category="<?= htmlspecialchars($row['category']); ?>" data-body="<?= htmlspecialchars($row['body']); ?>" data-bs-toggle="modal" data-bs-target="#createArticleModal"><i class="fas fa-edit"></i></button>
                                             <button class="btn btn-danger btn-sm delete-article-btn" data-id="<?= $row['id']; ?>" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal"><i class="fas fa-trash"></i></button>
-                                            <button class="btn btn-info btn-sm view-article-btn"
-                                                data-title="<?= htmlspecialchars($row['title']); ?>"
-                                                data-body="<?= htmlspecialchars($row['body']); ?>"
-                                                data-category="<?= htmlspecialchars($row['category']); ?>"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#viewArticleModal"><i class="fas fa-eye"></i></button>
+                                            <button class="btn btn-info btn-sm view-article-btn" data-title="<?= htmlspecialchars($row['title']); ?>" data-body="<?= htmlspecialchars($row['body']); ?>" data-category="<?= htmlspecialchars($row['category']); ?>" data-bs-toggle="modal" data-bs-target="#viewArticleModal"><i class="fas fa-eye"></i></button>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
-                            </tbody> -->
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -285,17 +181,16 @@ $articles = mysqli_query($con, $query);
         </div>
 
 
-       
-        <!-- footer start -->
 
-        <? include("./includes/views/footer.php"); ?>
 
-        <!-- footer end -->
 
+
+        <!-- footer -->
+        <?php include("./includes/views/footer.php"); ?>
     </div>
 
-     <!-- Create Article Modal -->
-     <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModalLabel" aria-hidden="true">
+    <!-- Create Article Modal -->
+    <div class="modal fade" id="createArticleModal" tabindex="-1" aria-labelledby="createArticleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -309,47 +204,36 @@ $articles = mysqli_query($con, $query);
                             <label for="article_title" class="form-label">Title</label>
                             <input type="text" class="form-control" id="article_title" name="article_title" required>
                         </div>
-
                         <div class="mb-3">
-    <label for="article_category" class="form-label">Category</label>
-    <select class="form-control" id="article_category" name="article_category" required>
-        <option value="">Select Category</option>
-        <?php
-        // Fetch categories from the database
-        $query = "SELECT category_name FROM jeoxillitycrm_category";
-        $result = mysqli_query($con, $query);
-
-        // Check if the query was successful
-        if ($result && mysqli_num_rows($result) > 0) {
-            // Loop through each category and create an option element
-            while ($row = mysqli_fetch_assoc($result)) {
-                $category_name = htmlspecialchars($row['category_name']); // Sanitize output
-                echo "<option value='$category_name'>$category_name</option>";
-            }
-        } else {
-            // Handle the case where no categories are found
-            echo "<option value=''>No categories available</option>";
-        }
-        ?>
-    </select>
-</div>
-
-                        <!-- <div class="mb-3">
                             <label for="article_category" class="form-label">Category</label>
                             <select class="form-control" id="article_category" name="article_category" required>
                                 <option value="">Select Category</option>
-                                <option value="Technology">Technology</option>
-                                <option value="Health">Health</option>
-                                <option value="Lifestyle">Lifestyle</option>
-                                <option value="Education">Education</option>
+                                <?php
+                                // Fetch categories from the database
+                                $query = "SELECT category_name FROM jeoxillitycrm_category";
+                                $result = mysqli_query($con, $query);
+
+                                // Check if the query was successful
+                                if ($result && mysqli_num_rows($result) > 0) {
+                                    // Loop through each category and create an option element
+                                    while ($row = mysqli_fetch_assoc($result)) {
+                                        $category_name = htmlspecialchars($row['category_name']); // Sanitize output
+                                        echo "<option value='$category_name'>$category_name</option>";
+                                    }
+                                } else {
+                                    // Handle the case where no categories are found
+                                    echo "<option value=''>No categories available</option>";
+                                }
+                                ?>
                             </select>
-                        </div> -->
+                        </div>
                         <div class="mb-3">
                             <label for="article_body" class="form-label">Content</label>
                             <textarea class="form-control " id="article_body" name="article_body"></textarea>
                             <script>
-                                CKEDITOR.replace('article_body');
-                                  contentsCss: 'body { background-color: white; color: black; }'
+                                CKEDITOR.replace('article_body', {
+                                    contentsCss: 'body { background-color: white; color: black; }'
+                                });
                             </script>
                         </div>
                         <div class="modal-footer">
@@ -362,7 +246,10 @@ $articles = mysqli_query($con, $query);
         </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
+
+    <!-- Delete Article Modal -->
+
+
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
@@ -381,6 +268,7 @@ $articles = mysqli_query($con, $query);
         </div>
     </div>
 
+
     <!-- View Article Modal -->
     <div class="modal fade" id="viewArticleModal" tabindex="-1" aria-labelledby="viewArticleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -390,9 +278,22 @@ $articles = mysqli_query($con, $query);
                     <button type="button" class="btn btn-sm btn-icon btn-outline-primary" data-bs-dismiss="modal" aria-label="Close"><i class="fa-light fa-times"></i></button>
                 </div>
                 <div class="modal-body">
-                    <h4 id="view-article-title"></h4>
-                    <p id="view-article-category"></p>
-                    <div id="view-article-body"></div>
+                    <div class="row">
+                        <div class="col-1">
+                            <h6>Title :</h6>
+                        </div>
+                        <div class="col-11">
+                            <h6 id="view-article-title"></h6>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <p id="view-article-category"></p>
+                    </div>
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <p>Description :</p>
+                        <div class="col-10" id="view-article-body"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -400,17 +301,10 @@ $articles = mysqli_query($con, $query);
             </div>
         </div>
     </div>
-   
-    <? include("./includes/views/footerjs.php"); ?>
-    <!-- event modal end -->
 
 
-
-
-
-
-
-
+    <!-- footer JS -->
+    <?php include("./includes/views/footerjs.php"); ?>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -449,21 +343,47 @@ $articles = mysqli_query($con, $query);
                 document.getElementById('createArticleModalLabel').textContent = 'Create New Article';
             });
 
-            // Handle Delete button click to show confirmation modal
             document.querySelectorAll('.delete-article-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    articleToDelete = this.getAttribute('data-id');
-                    var deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-                    deleteModal.show();
-                });
-            });
+        btn.addEventListener('click', function() {
+            articleToDelete = this.getAttribute('data-id');
+            var deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+            deleteModal.show();
+        });
+    });
 
-            // Handle confirm delete action
-            document.getElementById('confirm-delete-btn').addEventListener('click', function() {
-                if (articleToDelete) {
-                    window.location.href = '?delete_article=' + articleToDelete;
-                }
-            });
+    // Handle confirm delete action
+    document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+        if (articleToDelete) {
+            window.location.href = '?delete_article=' + articleToDelete;
+        }
+    });
+
+    // Handle modal hide event to reset the state and remove the backdrop
+    const deleteModalElement = document.getElementById('confirmDeleteModal');
+    deleteModalElement.addEventListener('hidden.bs.modal', function() {
+        articleToDelete = null; // Reset article to delete when the modal is closed
+        removeModalBackdrop();  // Ensure backdrop is removed
+    });
+
+    // Handle cancel button click to close the modal and reset the state
+    document.querySelectorAll('.btn-secondary').forEach(function(cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            var deleteModal = bootstrap.Modal.getInstance(document.getElementById('confirmDeleteModal'));
+            deleteModal.hide();
+            articleToDelete = null; // Reset the delete state
+            removeModalBackdrop();  // Ensure backdrop is removed
+        });
+    });
+
+    // Function to manually remove the modal backdrop and restore page
+    function removeModalBackdrop() {
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) {
+            backdrop.remove();  // Remove the backdrop from the DOM
+        }
+        document.body.classList.remove('modal-open');  // Ensure scrolling is restored
+        document.body.style.paddingRight = '';  // Reset body padding if necessary
+    }
 
             // Handle View button click
             document.querySelectorAll('.view-article-btn').forEach(function(btn) {
@@ -478,8 +398,32 @@ $articles = mysqli_query($con, $query);
                 });
             });
         });
-    </script>
 
+        // AJAX search
+        document.getElementById('search').addEventListener('input', function() {
+            let query = this.value;
+
+            if (query.length === 0) {
+                // Fetch all articles when the search bar is empty
+                fetchResults('');
+            } else if (query.length > 2) {
+                // Start searching after 2 characters
+                fetchResults(query);
+            }
+        });
+
+        function fetchResults(query) {
+            // Use AJAX to send the search query to the server
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'search_ajax.php?search=' + query, true);
+            xhr.onload = function() {
+                if (this.status === 200) {
+                    document.getElementById('results').innerHTML = this.responseText;
+                }
+            };
+            xhr.send();
+        }
+    </script>
 </body>
 
 </html>
