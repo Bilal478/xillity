@@ -268,10 +268,10 @@ if (isset($_GET['delete-record'])) {
                                         <textarea name="comments_name" id="comments_name" class="form-control" rows="3"></textarea>
                                     </div>
                                     <input type="hidden" name="Ticket_id" value="<?php echo $t_id; ?>">
-                                    <div class="col-12 mt-3 mb-3 d-flex justify-content-end">
+                                    <div class="col-12 mt-3 mb-3 d-flex justify-content-end gap-2">
                                         <button type="submit" class="btn btn-primary btn-md" name="create_package1">Add Comments</button>
                                         <!-- Add this delete button after the comment list -->
-                                        <button type="button" class="btn btn-danger" id="delete-selected">Delete Selected</button>
+                                        <button type="button" class="btn btn-danger" id="delete-selected">Delete Comments</button>
 
                                     </div>
                                     <?php
@@ -336,7 +336,7 @@ $(document).ready(function() {
                     if (response.success) {
                         // Successfully deleted, now remove comments from DOM
                         $('.comment-checkbox:checked').closest('.card').remove(); // Remove the selected comments from the DOM
-                        alert('Comments deleted successfully!');
+                       // alert('Comments deleted successfully!');
                     } else {
                         console.log("Error deleting comments: ", response.message);
                         alert('Error deleting comments: ' + response.message);
