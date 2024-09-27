@@ -521,10 +521,12 @@ if (isset($_GET['invoiceIdDuplicate'])) {
                                                                 <div class="kt-invoice__head" style="background-images: url(assets/media/bg/bg-5.jpg);padding:30px 0 !important;">
 
                                                                     <div class="kt-invoice__container">
+                                                                        
                                                                         <div class="row">
 
                                                                             <div class="col-md-6">
                                                                                 <img src="<? echo $g_modules_global['logo']; ?>" style="width:80px;">
+                                                                                
                                                                                 <p class=" mt-3">
                                                                                     <b>Invoice
                                                                                         Number:</b> <? echo "#" . $invoiceDeets['id']; ?>
