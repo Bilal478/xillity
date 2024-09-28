@@ -278,22 +278,24 @@ $articles = mysqli_query($con, $query);
                     <button type="button" class="btn btn-sm btn-icon btn-outline-primary" data-bs-dismiss="modal" aria-label="Close"><i class="fa-light fa-times"></i></button>
                 </div>
                 <div class="modal-body">
-                    <div class="row">
-                        <div class="col-1">
-                            <h6>Title :</h6>
-                        </div>
-                        <div class="col-11">
+
+              
+                      <div>
+                        <p style="font-size: 21px;">Title:</p>
                             <h6 id="view-article-title"></h6>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <p id="view-article-category"></p>
-                    </div>
-                    <div class="row">
-                        <div class="col-2"></div>
-                        <p>Description :</p>
+                            </div>
+                  
+                            <div>
+                            <p style="font-size: 21px;">Category:</p>
+                            <p id="view-article-category"></p>
+                            </div>
+                        <div> 
+                        <p style="font-size: 21px;">Description:</p>
                         <div class="col-10" id="view-article-body"></div>
-                    </div>
+                        </div>
+    
+                       
+                   
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -392,8 +394,8 @@ $articles = mysqli_query($con, $query);
                     const articleBody = this.getAttribute('data-body');
                     const articleCategory = this.getAttribute('data-category');
 
-                    document.getElementById('view-article-title').textContent = articleTitle;
-                    document.getElementById('view-article-category').textContent = 'Category: ' + articleCategory;
+                    document.getElementById('view-article-title').textContent =  articleTitle;
+                    document.getElementById('view-article-category').textContent =  articleCategory;
                     document.getElementById('view-article-body').innerHTML = articleBody;
                 });
             });

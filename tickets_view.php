@@ -271,9 +271,12 @@ if (isset($_GET['delete-record'])) {
                                     <div class="col-12 mt-3 mb-3 d-flex justify-content-end gap-2">
                                         <button type="submit" class="btn btn-primary btn-md" name="create_package1">Add Comments</button>
                                         <!-- Add this delete button after the comment list -->
-                                        <button type="button" class="btn btn-danger" id="delete-selected">Delete Comments</button>
+                                        <button type="button" class="btn btn-danger" id="delete-selected" >Delete Comments</button>
 
                                     </div>
+                                  
+                                 
+                                
                                     <?php
 
                                     $query = "SELECT jc.*, ju.name 
@@ -308,9 +311,80 @@ if (isset($_GET['delete-record'])) {
                         </div>
             </div>
         </form>
-       <script>
+
+
+
+        <script>
+$(document).ready(function() {
+    // Initially disable the delete button
+    $('#delete-selected').prop('disabled', true);
+
+    // Function to enable or disable the delete button based on checkbox status
+    function updateDeleteButtonState() {
+        let isChecked = $('.comment-checkbox:checked').length > 0;
+        $('#delete-selected').prop('disabled', !isChecked);
+    }
+
+    // Trigger the updateDeleteButtonState when any checkbox changes
+    $('.comment-checkbox').change(function() {
+        updateDeleteButtonState();
+    });
+
+    // Handle delete button click
+    $('#delete-selected').click(function() {
+        let selectedComments = [];
+        // Collect the IDs of selected comments
+        $('.comment-checkbox:checked').each(function() {
+            selectedComments.push($(this).data('id'));
+        });
+
+        if (selectedComments.length > 0) {
+            console.log("Selected comments:", selectedComments); // Log selected IDs
+
+            $.ajax({
+                url: 'delete_comments.php', // Your backend script for deleting comments
+                type: 'POST',
+                data: { commentIds: selectedComments },
+                success: function(response) {
+                    console.log("AJAX success response:", response); // Log the response from the backend
+
+                    // Ensure the response is parsed correctly
+                    if (typeof response === 'string') {
+                        response = JSON.parse(response);
+                    }
+
+                    if (response.success) {
+                        // Successfully deleted, now remove comments from DOM
+                        $('.comment-checkbox:checked').closest('.card').remove(); // Remove the selected comments from the DOM
+
+                        // After removal, re-check if any checkboxes are still selected
+                        updateDeleteButtonState();
+                    } else {
+                        console.log("Error deleting comments: ", response.message);
+                        alert('Error deleting comments: ' + response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log('AJAX error:', error); // Log any error from the request
+                    alert('There was an error processing your request.');
+                }
+            });
+        } else {
+            alert('Please select at least one comment to delete.');
+        }
+    });
+
+    // In case of page reload with preserved checkboxes, update the button state on load
+    updateDeleteButtonState();
+});
+</script>
+
+
+       <!-- <script>
 
 $(document).ready(function() {
+
+
     $('#delete-selected').click(function() {
         let selectedComments = [];
         // Collect the IDs of selected comments
@@ -353,7 +427,7 @@ $(document).ready(function() {
     });
 });
 
-       </script>
+       </script> -->
 
 
 

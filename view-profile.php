@@ -197,7 +197,8 @@ if (isset($_FILES['profile_pic'])) {
                     <div class="panel-header">
                         <h5>User Activities</h5>
                         <div class="dropdown">
-                            <a href="#" class="btn btn-sm btn-primary">View All</a>
+                            
+                            <a href="view-all-activities.php?customer_id=<?php echo $customer_id; ?>" class="btn btn-sm btn-primary">View All</a>
                         </div>
                     </div>
                     <div class="panel-body">
