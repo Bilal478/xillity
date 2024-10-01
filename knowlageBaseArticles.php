@@ -79,9 +79,11 @@ $articles = mysqli_query($con, $query);
 <head>
     <?php include("./includes/views/head2.php"); ?>
     <style>
-        .search-container {
+       
+       .search-container {
             position: relative;
-            width: 300px;
+            width: 250px;
+            height: 30px;
             margin-right: 10px;
             margin-top: 29px;
 
@@ -91,13 +93,12 @@ $articles = mysqli_query($con, $query);
         .search-box {
             width: 100%;
             padding: 10px 40px 10px 15px;
-            border: 1px solid  #1a3558;
-            border-radius: 10px;
-            background-color: #1a3558;
+            border: 1px solid  rgba(223, 223, 223, 0.15);
+            border-radius: 5px;
+            background-color: transparent;
             color: #fff;
-            height: 38px;
+            height: 30px;
         }
-
         .search-box:focus {
             outline: none;
         }
@@ -140,11 +141,11 @@ $articles = mysqli_query($con, $query);
                         <div class="btn-box d-flex gap-2" style="align-items: center;">
                             <!-- Search Input -->
                             <form id="search-form" method="get" class="d-inline-block" style="display: flex; align-items: center;">
-                                <input type="text" name="search" id="search" placeholder="Search articles..." class="form-control" style="height: 40px; width: 250px; padding: 0 10px; border-radius: 4px; border:none" />
+                                <input type="text" name="search" id="search" placeholder="Search articles..." class="form-control" style="height: 35px; width: 250px; padding: 0 10px; border-radius: 4px; border:none" />
                             </form>
 
                             <!-- Add New Button -->
-                            <button class="btn btn-sm btn-primary" style="height: 40px; width:120px" data-bs-toggle="modal" id="create-article-btn" data-bs-target="#createArticleModal">
+                            <button class="btn btn-sm btn-primary" style="height: 35px; width:120px" data-bs-toggle="modal" id="create-article-btn" data-bs-target="#createArticleModal">
                                 <i class="fa-light fa-plus"></i> Add New
                             </button>
                         </div>

@@ -230,7 +230,7 @@ if (isset($_GET['invoiceIdDuplicate'])) {
 
         .search-container {
             position: relative;
-            width: 300px;
+            width: 250px;
             margin-right: 10px;
             margin-top: 29px;
 
@@ -240,9 +240,9 @@ if (isset($_GET['invoiceIdDuplicate'])) {
         .search-box {
             width: 100%;
             padding: 10px 40px 10px 15px;
-            border: 1px solid  #1a3558;
-            border-radius: 10px;
-            background-color: #1a3558;
+            border: 1px solid  rgba(223, 223, 223, 0.15);
+            border-radius: 5px;
+            background-color: transparent;
             color: #fff;
             height: 38px;
         }
