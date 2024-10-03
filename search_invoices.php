@@ -21,7 +21,7 @@ while ($row = mysqli_fetch_assoc($results)) {
         <td><?php echo $row['client_id']; ?></td>
         <td><strong>$ <?php echo $row['total']; ?></strong></td>
         <td><?php echo date('Y-m-d', $row['timeAdded']); ?></td>
-        <td><?php echo $row['status']; ?></td>
+        
         <td>
             <div class="btn-group">
                 <a href="?action=add&invoiceId=<?php echo $row['id']; ?>" class="btn"><i class="fa-light fa-pen"></i></a>

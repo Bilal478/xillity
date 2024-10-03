@@ -2,9 +2,6 @@
 require("./global.php");
 $invoice_id = $_GET['view'];
 $invoiceDeets = getRow($con, "SELECT * FROM " . $g_projectSlug . "_invoices  where id='$invoice_id'");
-
-
-
 // Fetch data from the systemconfigurations table
 $query = "SELECT email, phone_number, profile_pic, address FROM jeoxillitycrm_systemconfigurations LIMIT 1";
 $result = mysqli_query($con, $query);
