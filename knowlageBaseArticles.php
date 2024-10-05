@@ -79,40 +79,40 @@ $articles = mysqli_query($con, $query);
 <head>
     <?php include("./includes/views/head2.php"); ?>
     <style>
-    .search-container {
-        position: relative;
-        width: 250px;
-        height: 30px;
-        margin-right: 10px;
-        margin-top: 29px;
+        .search-container {
+            position: relative;
+            width: 250px;
+            height: 30px;
+            margin-right: 10px;
+            margin-top: 29px;
 
 
-    }
+        }
 
-    .search-box {
-        width: 100%;
-        padding: 10px 40px 10px 15px;
-        border: 1px solid rgba(223, 223, 223, 0.15);
-        border-radius: 5px;
-        background-color: transparent;
-        color: #fff;
-        height: 30px;
-    }
+        .search-box {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1px solid rgba(223, 223, 223, 0.15);
+            border-radius: 5px;
+            background-color: transparent;
+            color: #fff;
+            height: 30px;
+        }
 
-    .search-box:focus {
-        outline: none;
-    }
+        .search-box:focus {
+            outline: none;
+        }
     </style>
 
     <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
     <style>
-    .cke_notification_warning {
-        display: none;
-    }
+        .cke_notification_warning {
+            display: none;
+        }
 
-    a {
-        text-decoration: none !important;
-    }
+        a {
+            text-decoration: none !important;
+        }
     </style>
 </head>
 
@@ -126,10 +126,10 @@ $articles = mysqli_query($con, $query);
     <div class="main-content">
         <!-- Message display -->
         <?php if (isset($_SESSION['message'])): ?>
-        <div class="alert alert-success" id="message">
-            <?= htmlspecialchars($_SESSION['message']); ?>
-        </div>
-        <?php unset($_SESSION['message']); // Clear the message 
+            <div class="alert alert-success" id="message">
+                <?= htmlspecialchars($_SESSION['message']); ?>
+            </div>
+            <?php unset($_SESSION['message']); // Clear the message 
             ?>
         <?php endif; ?>
 
@@ -177,28 +177,28 @@ $articles = mysqli_query($con, $query);
                             </thead>
                             <tbody id="results">
                                 <?php while ($row = mysqli_fetch_assoc($articles)): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($row['title']); ?></td>
-                                    <td><?= htmlspecialchars($row['category']); ?></td>
-                                    <td><?= htmlspecialchars($row['created_at']); ?></td>
-                                    <td>
-                                        <button class="btn btn-warning btn-sm edit-article-btn"
-                                            data-id="<?= $row['id']; ?>"
-                                            data-title="<?= htmlspecialchars($row['title']); ?>"
-                                            data-category="<?= htmlspecialchars($row['category']); ?>"
-                                            data-body="<?= htmlspecialchars($row['body']); ?>" data-bs-toggle="modal"
-                                            data-bs-target="#createArticleModal"><i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-danger btn-sm delete-article-btn"
-                                            data-id="<?= $row['id']; ?>" data-bs-toggle="modal"
-                                            data-bs-target="#confirmDeleteModal"><i class="fas fa-trash"></i></button>
-                                        <button class="btn btn-info btn-sm view-article-btn"
-                                            data-title="<?= htmlspecialchars($row['title']); ?>"
-                                            data-body="<?= htmlspecialchars($row['body']); ?>"
-                                            data-category="<?= htmlspecialchars($row['category']); ?>"
-                                            data-bs-toggle="modal" data-bs-target="#viewArticleModal"><i
-                                                class="fas fa-eye"></i></button>
-                                    </td>
-                                </tr>
+                                    <tr>
+                                        <td><?= htmlspecialchars($row['title']); ?></td>
+                                        <td><?= htmlspecialchars($row['category']); ?></td>
+                                        <td><?= htmlspecialchars($row['created_at']); ?></td>
+                                        <td>
+                                            <button class="btn btn-warning btn-sm edit-article-btn"
+                                                data-id="<?= $row['id']; ?>"
+                                                data-title="<?= htmlspecialchars($row['title']); ?>"
+                                                data-category="<?= htmlspecialchars($row['category']); ?>"
+                                                data-body="<?= htmlspecialchars($row['body']); ?>" data-bs-toggle="modal"
+                                                data-bs-target="#createArticleModal"><i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-danger btn-sm delete-article-btn"
+                                                data-id="<?= $row['id']; ?>" data-bs-toggle="modal"
+                                                data-bs-target="#confirmDeleteModal"><i class="fas fa-trash"></i></button>
+                                            <button class="btn btn-info btn-sm view-article-btn"
+                                                data-title="<?= htmlspecialchars($row['title']); ?>"
+                                                data-body="<?= htmlspecialchars($row['body']); ?>"
+                                                data-category="<?= htmlspecialchars($row['category']); ?>"
+                                                data-bs-toggle="modal" data-bs-target="#viewArticleModal"><i
+                                                    class="fas fa-eye"></i></button>
+                                        </td>
+                                    </tr>
                                 <?php endwhile; ?>
                             </tbody>
                         </table>
@@ -206,12 +206,6 @@ $articles = mysqli_query($con, $query);
                 </div>
             </div>
         </div>
-
-
-
-
-
-
         <!-- footer -->
         <?php include("./includes/views/footer.php"); ?>
     </div>
@@ -233,6 +227,10 @@ $articles = mysqli_query($con, $query);
                             <label for="article_title" class="form-label">Title</label>
                             <input type="text" class="form-control" id="article_title" name="article_title" required>
                         </div>
+
+
+                     
+
                         <div class="mb-3">
                             <label for="article_category" class="form-label">Category</label>
                             <select class="form-control" id="article_category" name="article_category" required>
@@ -255,14 +253,15 @@ $articles = mysqli_query($con, $query);
                                 }
                                 ?>
                             </select>
-                        </div>
+
+                        </div>  
                         <div class="mb-3">
                             <label for="article_body" class="form-label">Content</label>
                             <textarea class="form-control " id="article_body" name="article_body"></textarea>
                             <script>
-                            CKEDITOR.replace('article_body', {
-                                contentsCss: 'body { background-color: white; color: black; }'
-                            });
+                                CKEDITOR.replace('article_body', {
+                                    contentsCss: 'body { background-color: white; color: black; }'
+                                });
                             </script>
                         </div>
                         <div class="modal-footer">
@@ -279,7 +278,6 @@ $articles = mysqli_query($con, $query);
 
 
     <!-- Delete Article Modal -->
-
 
     <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel"
         aria-hidden="true">
@@ -343,195 +341,113 @@ $articles = mysqli_query($con, $query);
     <!-- footer JS -->
     <?php include("./includes/views/footerjs.php"); ?>
     <script>
-document.addEventListener("DOMContentLoaded", function() {
-    let articleToDelete = null;
+        document.addEventListener("DOMContentLoaded", function() {
+            let articleToDelete = null;
 
-    // Auto-hide the message after a few seconds
-    setTimeout(function() {
-        var message = document.getElementById('message');
-        if (message) {
-            message.style.display = 'none';
-        }
-    }, 3000); // Hide after 3 seconds
+            // Auto-hide the message after a few seconds
+            setTimeout(function() {
+                var message = document.getElementById('message');
+                if (message) {
+                    message.style.display = 'none';
+                }
+            }, 3000); // Hide after 3 seconds
 
-    // Rebind event listeners on initial page load
-    rebindEventListeners();
-
-    // Handle modal hide event to reset the state and remove the backdrop
-    const deleteModalElement = document.getElementById('confirmDeleteModal');
-    deleteModalElement.addEventListener('hidden.bs.modal', function() {
-        articleToDelete = null; // Reset article to delete when the modal is closed
-        removeModalBackdrop(); // Ensure backdrop is removed
-    });
-
-    // Handle AJAX search input
-    document.getElementById('search').addEventListener('input', function() {
-        let query = this.value;
-
-        if (query.length === 0) {
-            // Fetch all articles when the search bar is empty
-            fetchResults('');
-        } else if (query.length > 2) {
-            // Start searching after 2 characters
-            fetchResults(query);
-        }
-    });
-});
-
-// Rebind the event listeners after dynamic content update
-function rebindEventListeners() {
-    // Handle Edit button click
-    document.querySelectorAll('.edit-article-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            const articleId = this.getAttribute('data-id');
-            const articleTitle = this.getAttribute('data-title');
-            const articleCategory = this.getAttribute('data-category');
-            const articleBody = this.getAttribute('data-body');
-
-            document.getElementById('article_id').value = articleId;
-            document.getElementById('article_title').value = articleTitle;
-            document.getElementById('article_category').value = articleCategory;
-            CKEDITOR.instances.article_body.setData(articleBody);
-            document.getElementById('createArticleModalLabel').textContent = 'Edit Article';
-        });
-    });
-
-    // Handle Create button click (reset the form for a new article)
-    document.getElementById('create-article-btn').addEventListener('click', function() {
-        document.getElementById('article_id').value = '';
-        document.getElementById('article_title').value = '';
-        document.getElementById('article_category').value = '';
-        CKEDITOR.instances.article_body.setData('');
-        document.getElementById('createArticleModalLabel').textContent = 'Create New Article';
-    });
-
-    // Handle Delete button click
-    document.querySelectorAll('.delete-article-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            articleToDelete = this.getAttribute('data-id');
-            var deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-            deleteModal.show();
-        });
-    });
-
-    // Handle confirm delete action
-    document.getElementById('confirm-delete-btn').addEventListener('click', function() {
-        if (articleToDelete) {
-            window.location.href = '?delete_article=' + articleToDelete;
-        }
-    });
-
-    // Handle View button click
-    document.querySelectorAll('.view-article-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            const articleTitle = this.getAttribute('data-title');
-            const articleBody = this.getAttribute('data-body');
-            const articleCategory = this.getAttribute('data-category');
-
-            document.getElementById('view-article-title').textContent = articleTitle;
-            document.getElementById('view-article-category').textContent = articleCategory;
-            document.getElementById('view-article-body').innerHTML = articleBody;
-        });
-    });
-}
-
-// Fetch the search results via AJAX
-function fetchResults(query) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', 'search_ajax.php?search=' + query, true);
-    xhr.onload = function() {
-        if (this.status === 200) {
-            document.getElementById('results').innerHTML = this.responseText;
-
-            // After updating the table rows, rebind the event listeners
+            // Rebind event listeners on initial page load
             rebindEventListeners();
-        }
-    };
-    xhr.send();
-}
 
-// Function to manually remove the modal backdrop and restore page
-function removeModalBackdrop() {
-    const backdrop = document.querySelector('.modal-backdrop');
-    if (backdrop) {
-        backdrop.remove(); // Remove the backdrop from the DOM
-    }
-    document.body.classList.remove('modal-open'); // Ensure scrolling is restored
-    document.body.style.paddingRight = ''; // Reset body padding if necessary
-}
-</script>
-
-
-    <!-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let articleToDelete = null;
-
-        // Auto-hide the message after a few seconds
-        setTimeout(function() {
-            var message = document.getElementById('message');
-            if (message) {
-                message.style.display = 'none';
-            }
-        }, 3000); // Hide after 3 seconds
-
-        // Handle Edit button click
-        document.querySelectorAll('.edit-article-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const articleId = this.getAttribute('data-id');
-                const articleTitle = this.getAttribute('data-title');
-                const articleCategory = this.getAttribute('data-category');
-                const articleBody = this.getAttribute('data-body');
-
-                document.getElementById('article_id').value = articleId;
-                document.getElementById('article_title').value = articleTitle;
-                document.getElementById('article_category').value = articleCategory;
-                CKEDITOR.instances.article_body.setData(articleBody);
-                document.getElementById('createArticleModalLabel').textContent = 'Edit Article';
-            });
-        });
-
-        // Handle Create button click (reset the form for a new article)
-        document.getElementById('create-article-btn').addEventListener('click', function() {
-            document.getElementById('article_id').value = '';
-            document.getElementById('article_title').value = '';
-            document.getElementById('article_category').value = '';
-            CKEDITOR.instances.article_body.setData('');
-            document.getElementById('createArticleModalLabel').textContent = 'Create New Article';
-        });
-
-        document.querySelectorAll('.delete-article-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                articleToDelete = this.getAttribute('data-id');
-                var deleteModal = new bootstrap.Modal(document.getElementById(
-                    'confirmDeleteModal'));
-                deleteModal.show();
-            });
-        });
-
-        // Handle confirm delete action
-        document.getElementById('confirm-delete-btn').addEventListener('click', function() {
-            if (articleToDelete) {
-                window.location.href = '?delete_article=' + articleToDelete;
-            }
-        });
-
-        // Handle modal hide event to reset the state and remove the backdrop
-        const deleteModalElement = document.getElementById('confirmDeleteModal');
-        deleteModalElement.addEventListener('hidden.bs.modal', function() {
-            articleToDelete = null; // Reset article to delete when the modal is closed
-            removeModalBackdrop(); // Ensure backdrop is removed
-        });
-
-        // Handle cancel button click to close the modal and reset the state
-        document.querySelectorAll('.btn-secondary').forEach(function(cancelBtn) {
-            cancelBtn.addEventListener('click', function() {
-                var deleteModal = bootstrap.Modal.getInstance(document.getElementById(
-                    'confirmDeleteModal'));
-                deleteModal.hide();
-                articleToDelete = null; // Reset the delete state
+            // Handle modal hide event to reset the state and remove the backdrop
+            const deleteModalElement = document.getElementById('confirmDeleteModal');
+            deleteModalElement.addEventListener('hidden.bs.modal', function() {
+                articleToDelete = null; // Reset article to delete when the modal is closed
                 removeModalBackdrop(); // Ensure backdrop is removed
             });
+
+            // Handle AJAX search input
+            document.getElementById('search').addEventListener('input', function() {
+                let query = this.value;
+
+                if (query.length === 0) {
+                    // Fetch all articles when the search bar is empty
+                    fetchResults('');
+                } else if (query.length > 2) {
+                    // Start searching after 2 characters
+                    fetchResults(query);
+                }
+            });
         });
+
+        // Rebind the event listeners after dynamic content update
+        function rebindEventListeners() {
+          
+
+            document.querySelectorAll('.edit-article-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const articleId = this.getAttribute('data-id');
+                    const articleTitle = this.getAttribute('data-title');
+                    const articleCategory = this.getAttribute('data-category');
+                    const articleBody = this.getAttribute('data-body');
+
+                    document.getElementById('article_id').value = articleId;
+                    document.getElementById('article_title').value = articleTitle;
+                    document.getElementById('article_category').value = articleCategory;
+                    CKEDITOR.instances.article_body.setData(articleBody);
+                    document.getElementById('createArticleModalLabel').textContent = 'Edit Article';
+                });
+            });
+
+            // Handle Create button click (reset the form for a new article)
+            document.getElementById('create-article-btn').addEventListener('click', function() {
+                document.getElementById('article_id').value = '';
+                document.getElementById('article_title').value = '';
+                document.getElementById('article_category').value = '';
+                CKEDITOR.instances.article_body.setData('');
+                document.getElementById('createArticleModalLabel').textContent = 'Create New Article';
+            });
+
+            // Handle Delete button click
+            document.querySelectorAll('.delete-article-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    articleToDelete = this.getAttribute('data-id');
+                    var deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
+                    deleteModal.show();
+                });
+            });
+
+            // Handle confirm delete action
+            document.getElementById('confirm-delete-btn').addEventListener('click', function() {
+                if (articleToDelete) {
+                    window.location.href = '?delete_article=' + articleToDelete;
+                }
+            });
+
+            // Handle View button click
+            document.querySelectorAll('.view-article-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const articleTitle = this.getAttribute('data-title');
+                    const articleBody = this.getAttribute('data-body');
+                    const articleCategory = this.getAttribute('data-category');
+
+                    document.getElementById('view-article-title').textContent = articleTitle;
+                    document.getElementById('view-article-category').textContent = articleCategory;
+                    document.getElementById('view-article-body').innerHTML = articleBody;
+                });
+            });
+        }
+
+        // Fetch the search results via AJAX
+        function fetchResults(query) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', 'search_ajax.php?search=' + query, true);
+            xhr.onload = function() {
+                if (this.status === 200) {
+                    document.getElementById('results').innerHTML = this.responseText;
+
+                    // After updating the table rows, rebind the event listeners
+                    rebindEventListeners();
+                }
+            };
+            xhr.send();
+        }
 
         // Function to manually remove the modal backdrop and restore page
         function removeModalBackdrop() {
@@ -542,48 +458,8 @@ function removeModalBackdrop() {
             document.body.classList.remove('modal-open'); // Ensure scrolling is restored
             document.body.style.paddingRight = ''; // Reset body padding if necessary
         }
+    </script>
 
-        // Handle View button click
-        document.querySelectorAll('.view-article-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                const articleTitle = this.getAttribute('data-title');
-                const articleBody = this.getAttribute('data-body');
-                const articleCategory = this.getAttribute('data-category');
-
-                document.getElementById('view-article-title').textContent = articleTitle;
-                document.getElementById('view-article-category').textContent = articleCategory;
-                document.getElementById('view-article-body').innerHTML = articleBody;
-            });
-        });
-    });
-
-    // AJAX search
-    document.getElementById('search').addEventListener('input', function() {
-        let query = this.value;
-
-        if (query.length === 0) {
-            // Fetch all articles when the search bar is empty
-            fetchResults('');
-        } else if (query.length > 2) {
-            // Start searching after 2 characters
-            fetchResults(query);
-        }
-    });
-
-    function fetchResults(query) {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', 'search_ajax.php?search=' + query, true);
-        xhr.onload = function() {
-            if (this.status === 200) {
-                document.getElementById('results').innerHTML = this.responseText;
-
-                // After updating the table rows, rebind the event listeners
-                rebindEventListeners();
-            }
-        };
-        xhr.send();
-    }
-    </script> -->
 </body>
 
 </html>

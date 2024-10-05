@@ -11,7 +11,6 @@
             <ul class="sidebar-link-group">
 
                 <li class="sidebar-dropdown-item">
-
                     <a href="index.php" class="sidebar-link"><span class="nav-icon"><i class="fa-light fa-cart-shopping-fast"></i></span> <span class="sidebar-txt">eCommerce</span></a>
 
                 </li>

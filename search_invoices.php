@@ -15,21 +15,26 @@ $results = mysqli_query($con, $query);
 // Output the search results dynamically
 while ($row = mysqli_fetch_assoc($results)) {
 ?>
-    <tr>
-        <td><?php echo $row['id']; ?></td>
-        <td><a href="?view=<?php echo $row['id']; ?>"><?php echo $row['title']; ?></a></td>
-        <td><?php echo $row['client_id']; ?></td>
-        <td><strong>$ <?php echo $row['total']; ?></strong></td>
-        <td><?php echo date('Y-m-d', $row['timeAdded']); ?></td>
-        
-        <td>
-            <div class="btn-group">
-                <a href="?action=add&invoiceId=<?php echo $row['id']; ?>" class="btn"><i class="fa-light fa-pen"></i></a>
-                <a href="?view=<?php echo $row['id']; ?>" class="btn"><i class="fa-light fa-eye"></i></a>
-                <a data-toggle="modal" data-target="#delete_record" data-url="?delete-record=<?php echo $row['id']; ?>" href="#" class="btn"><i class="fa-light fa-trash"></i></a>
-            </div>
-        </td>
-    </tr>
+<tr>
+    <td><?php echo $row['id']; ?></td>
+    <td><a href="?view=<?php echo $row['id']; ?>"><?php echo $row['title']; ?></a></td>
+    <td>
+        <? echo $g_allUsersInfo[$row['client_id']]['name'] ?>
+        <br><small>
+            <? echo $g_allUsersInfo[$row['client_id']]['email'] ?>
+        </small>
+    </td>
+    <td><strong>$ <?php echo $row['total']; ?></strong></td>
+    <td><?php echo date('Y-m-d', $row['timeAdded']); ?></td>
+    <td>
+        <div class="btn-group">
+            <a href="?action=add&invoiceId=<?php echo $row['id']; ?>" class="btn"><i class="fa-light fa-pen"></i></a>
+            <a href="?view=<?php echo $row['id']; ?>" class="btn"><i class="fa-light fa-eye"></i></a>
+            <a data-toggle="modal" data-target="#delete_record" data-url="?delete-record=<?php echo $row['id']; ?>"
+                href="#" class="btn"><i class="fa-light fa-trash"></i></a>
+        </div>
+    </td>
+</tr>
 <?php
 }
 ?>
