@@ -1,4 +1,5 @@
-<? require("./global.php");
+<?
+ require("./global.php");
 $primaryTableName = "tickets";
 if (isset($_POST['create_package'])) {
     $id = generateRandomString();

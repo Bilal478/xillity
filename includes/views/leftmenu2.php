@@ -56,7 +56,7 @@
 							<li class="sidebar-dropdown-item"><a href="Tickets.php" class="sidebar-link">Tickets</a></li>
 
 
-							<li class="sidebar-dropdown-item"><a href="error-404.php" class="sidebar-link">Knowlagebase articles</a></li>
+							<li class="sidebar-dropdown-item"><a href="knowlageBaseArticles.php" class="sidebar-link">Knowlagebase articles</a></li>
 
 							<li class="sidebar-dropdown-item"><a href="error-404.php" class="sidebar-link">TimeEntry</a></li>
 

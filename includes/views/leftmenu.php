@@ -39,7 +39,7 @@ if ($logged == 1) {
 							<li class="sidebar-dropdown-item"><a href="sites.php" class="sidebar-link">Sites</a></li>
 							<li class="sidebar-dropdown-item"><a href="customers.php" class="sidebar-link">Customers</a></li>
 							<li class="sidebar-dropdown-item"><a href="Tickets.php" class="sidebar-link">Tickets</a></li>
-							<li class="sidebar-dropdown-item"><a href="error-404.php" class="sidebar-link">Knowlagebase articles</a></li>
+							<li class="sidebar-dropdown-item"><a href="knowlageBaseArticles.php" class="sidebar-link">Knowlagebase articles</a></li>
 							<li class="sidebar-dropdown-item"><a href="error-404.php" class="sidebar-link">TimeEntry</a></li>
 							<li class="sidebar-dropdown-item"><a href="calendar.php" class="sidebar-link">Calendar</a></li>
 							<li class="sidebar-dropdown-item"><a href="task.php" class="sidebar-link">Task</a></li>
